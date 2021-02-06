@@ -1,3 +1,4 @@
+import { CrestRenderer } from '../CrestRenderer'
 import Tincture from './Tincture'
 
 class ColorTincture implements Tincture {
@@ -5,6 +6,10 @@ class ColorTincture implements Tincture {
 
   constructor(colorHex: string) {
     this.colorHex = colorHex
+  }
+
+  accept(visitor: CrestRenderer): void {
+    visitor.renderColorTincture(this)
   }
 }
 
