@@ -8,6 +8,7 @@ import ColorTincture from './model/ColorTincture'
 import SolidField from './model/field/SolidField';
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField';
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture';
+import { Saltire, Bend, Cross, Fess, Pale } from './model/Ordinary';
 
 function App() {
   const black = "#000000"
@@ -19,17 +20,15 @@ function App() {
   const blue = "#bae1ff"
 
   var crest = new Crest(
-    new SolidField(
-      new Ruste(
-        new ColorTincture(red),
-        new ColorTincture(green),
-      ),
-      /*new ColorTincture(orange),
-      new Paly(
-        new ColorTincture(blue),
-        new ColorTincture(yellow)
-      )*/
-    )
+    new PerBendDividedField(
+      new ColorTincture(orange),
+      new ColorTincture(red)
+    ),
+    [
+      new Saltire(
+        new ColorTincture(blue)
+      )
+    ]
   )
   return (
     <div className="App">

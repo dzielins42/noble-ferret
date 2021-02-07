@@ -2,6 +2,7 @@ import ColorTincture from './model/ColorTincture'
 import Crest from './model/Crest'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
+import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture'
 import Visitable from './Visitable'
 
@@ -40,6 +41,12 @@ export abstract class CrestRenderer {
   abstract renderLozengy(lozengy: Lozengy): void
   abstract renderFusilly(fusilly: Fusilly): void
   abstract renderRuste(ruste: Ruste): void
+  // Ordinary
+  abstract renderPale(pale: Pale): void
+  abstract renderFess(fess: Fess): void
+  abstract renderCross(cross: Cross): void
+  abstract renderBend(bend: Bend): void
+  abstract renderSaltire(saltire: Saltire): void
 
   abstract renderColorTincture(colorTincture: ColorTincture): void
 }

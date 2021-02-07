@@ -12,6 +12,7 @@ import { linear } from './MathUtils'
 import BlankTexture from './model/BlankTexture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture'
 import Tincture from './model/Tincture'
+import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -27,9 +28,15 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderCrest(crest: Crest): void {
+    for (let i = 0; i < 10; i++) {
+
+    }
     this.value = (
       <Layer>
         {this.renderSelf(crest.field)}
+        {crest.ordinaries.map((ordinary, index) => {
+          return this.renderSelf(ordinary)
+        })}
         <Rect
           x={this.focusArea.left}
           y={this.focusArea.top}
@@ -418,6 +425,82 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
+  // Ordinary
+  renderPale(pale: Pale): void {
+    const w = this.focusArea.width() * this.T
+    this.value = (
+      <Group
+        clipX={this.focusArea.centerHorizontal() - w / 2}
+        clipY={0}
+        clipWidth={w}
+        clipHeight={this.viewportHeight}
+      >
+        {this.renderSelf(pale.texture)}
+      </Group >
+    )
+  }
+
+  renderFess(fess: Fess): void {
+    const h = this.focusArea.height() * this.T
+    this.value = (
+      <Group
+        clipX={0}
+        clipY={this.focusArea.centerVertical() - h / 2}
+        clipWidth={this.viewportWidth}
+        clipHeight={h}
+      >
+        {this.renderSelf(fess.texture)}
+      </Group >
+    )
+  }
+
+  renderCross(cross: Cross): void {
+    const pale = new Pale(cross.texture)
+    const fess = new Fess(cross.texture)
+    this.value = (
+      <Group>
+        {this.renderSelf(pale)}
+        {this.renderSelf(fess)}
+      </Group>
+    )
+  }
+
+  renderBend(bend: Bend): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const t = Math.min(this.focusArea.width(), this.focusArea.height()) * this.T
+    const dimen = Math.SQRT2 * (w + h) / 2
+    const q = Math.atan(
+      this.focusArea.height() / this.focusArea.width()
+    )
+    this.value = (
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          ctx.translate(
+            this.focusArea.centerHorizontal(),
+            this.focusArea.centerVertical()
+          )
+          ctx.rotate(q * (bend.sinister ? -1 : 1))
+          ctx.rect(-dimen / 2, -t / 2, dimen, t)
+          ctx.reset()
+        }}
+      >
+        {this.renderSelf(bend.texture)}
+      </Group>
+    )
+  }
+
+  renderSaltire(saltire: Saltire): void {
+    const bend = new Bend(saltire.texture, false)
+    const bendSinister = new Bend(saltire.texture, true)
+    this.value = (
+      <Group>
+        {this.renderSelf(bend)}
+        {this.renderSelf(bendSinister)}
+      </Group>
+    )
+  }
+
   renderColorTincture(colorTincture: ColorTincture): void {
     this.value = (
       <Rect
@@ -438,6 +521,8 @@ class PlainCrestRenderer extends CrestRenderer {
     let renderer = new PlainCrestRenderer(width, height)
     return renderer.render(visitable)
   }
+
+  private readonly T: number = 0.25
 }
 
 enum LozengyType {
