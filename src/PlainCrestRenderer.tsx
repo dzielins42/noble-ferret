@@ -10,6 +10,8 @@ import Rectangle from './Rectangle'
 import Crest from './model/Crest'
 import { linear } from './MathUtils'
 import BlankTexture from './model/BlankTexture'
+import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture'
+import Tincture from './model/Tincture'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -39,18 +41,8 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
+  // Field
   renderSolidField(solidField: SolidField): void {
-    var width = this.viewportWidth / 5
-    var height = width
-    //this.value = renderer.render(solidField.texture)
-    /*this.value = (
-      <Group
-        clipFunc={(ctx: Konva.Context) => {
-          ctx.arc(250, 120, 50, 0, Math.PI * 2, false)
-        }}>
-        {this.renderSelf(solidField.texture)}
-      </Group >
-    )*/
     this.value = (
       <Group>
         {this.renderSelf(solidField.texture)}
@@ -98,24 +90,22 @@ class PlainCrestRenderer extends CrestRenderer {
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(0, fun(0))
             ctx.lineTo(this.viewportWidth, fun(this.viewportWidth))
-            ctx.lineTo(this.viewportWidth - q, 0);
-            ctx.closePath();
-          }}
-        >
+            ctx.lineTo(this.viewportWidth - q, 0)
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture1)}
         </Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(0, fun(0))
             ctx.lineTo(this.viewportWidth, fun(this.viewportWidth))
-            ctx.lineTo(q, this.viewportHeight);
-            ctx.closePath();
-          }}
-        >
+            ctx.lineTo(q, this.viewportHeight)
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -139,26 +129,24 @@ class PlainCrestRenderer extends CrestRenderer {
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(0, fun1(0))
             ctx.lineTo(this.viewportWidth, fun1(this.viewportWidth))
             ctx.lineTo(0, fun2(0))
             ctx.lineTo(this.viewportWidth, fun2(this.viewportWidth))
-            ctx.closePath();
-          }}
-        >
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture1)}
         </Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(0, fun1(0))
             ctx.lineTo(this.viewportWidth, fun1(this.viewportWidth))
             ctx.lineTo(this.viewportWidth, fun2(this.viewportWidth))
             ctx.lineTo(0, fun2(0))
-            ctx.closePath();
-          }}
-        >
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -173,16 +161,15 @@ class PlainCrestRenderer extends CrestRenderer {
         {this.renderSelf(field.texture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(0, 0)
             ctx.lineTo(x, 0)
             ctx.lineTo(x, this.viewportHeight)
             ctx.lineTo(this.viewportWidth, this.viewportHeight)
             ctx.lineTo(this.viewportWidth, y)
             ctx.lineTo(0, y)
-            ctx.closePath();
-          }}
-        >
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture1)}
         </Group>
       </Group>
@@ -219,7 +206,7 @@ class PlainCrestRenderer extends CrestRenderer {
         {this.renderSelf(field.texture1)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.moveTo(
               0,
               fun(0)
@@ -232,9 +219,8 @@ class PlainCrestRenderer extends CrestRenderer {
               this.viewportWidth,
               fun(this.viewportWidth)
             )
-            ctx.closePath();
-          }}
-        >
+            ctx.closePath()
+          }}>
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -259,6 +245,178 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
+  // Variation
+  renderBarry(barry: Barry): void {
+    const h = this.viewportHeight / (barry.count * 2)
+    const w = this.viewportWidth
+    this.value = (
+      <Group>
+        {this.renderSelf(barry.tincture2)}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            for (let i = 0; i < barry.count; i++) {
+              ctx.rect(0, 2 * i * h, w, h)
+            }
+          }}>
+          {this.renderSelf(barry.tincture1)}
+        </Group>
+      </Group>
+    )
+  }
+
+  renderPaly(paly: Paly): void {
+    const w = this.viewportWidth / (paly.count * 2)
+    const h = this.viewportHeight
+    this.value = (
+      <Group>
+        {this.renderSelf(paly.tincture2)}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            for (let i = 0; i < paly.count; i++) {
+              ctx.rect(2 * i * w, 0, w, h)
+            }
+          }}>
+          {this.renderSelf(paly.tincture1)}
+        </Group>
+      </Group>
+    )
+  }
+
+  renderBendy(bendy: Bendy): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.SQRT2 * (w + h) / 2
+    const t = dimen / (bendy.count * 2)
+    this.value = (
+      <Group>
+        {this.renderSelf(bendy.tincture2)}
+        <Group
+          x={w / 2}
+          y={h / 2}
+          offsetX={dimen / 2}
+          offsetY={dimen / 2}
+          rotation={bendy.sinister ? 45 : -45}
+          clipFunc={(ctx: Konva.Context) => {
+            for (let i = 0; i < bendy.count; i++) {
+              ctx.rect(0, 2 * i * t, dimen, t)
+            }
+          }}>
+          {this.renderSelf(bendy.tincture1, dimen, dimen)}
+        </Group>
+      </Group>
+    )
+  }
+
+  renderChequy(chequy: Chequy): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const d = Math.min(w, h) / (chequy.count * 2)
+    const hCount = Math.ceil(w / d)
+    const vCount = Math.ceil(h / d)
+    this.value = (
+      <Group>
+        {this.renderSelf(chequy.tincture2)}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            for (let row = 0; row < vCount; row++) {
+              for (let col = 0; col < hCount; col++) {
+                ctx.rect(row * 2 * d, col * 2 * d, d, d)
+                ctx.rect((row * 2 + 1) * d, (col * 2 + 1) * d, d, d)
+              }
+            }
+          }}>
+          {this.renderSelf(chequy.tincture1)}
+        </Group>
+      </Group>
+    )
+  }
+
+  renderLozengy(lozengy: Lozengy): void {
+    this.value = this.innerRenderLozengy(
+      lozengy.tincture1, lozengy.tincture2,
+      lozengy.count, 1
+    )
+  }
+
+  renderFusilly(fusilly: Fusilly): void {
+    this.value = this.innerRenderLozengy(
+      fusilly.tincture1, fusilly.tincture2,
+      fusilly.count, 1.5
+    )
+  }
+
+  renderRuste(ruste: Ruste): void {
+    this.value = this.innerRenderLozengy(
+      ruste.tincture1, ruste.tincture2,
+      ruste.count, 1.5, LozengyType.Ruste
+    )
+  }
+
+  private innerRenderLozengy(
+    tincture1: Tincture,
+    tincture2: Tincture,
+    count: number,
+    dRatio: number,
+    type: LozengyType = LozengyType.Normal
+  ): React.ReactNode {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    let p: number, q: number
+    if (w < h) {
+      q = w / (count - 1)
+      p = q * dRatio
+    } else {
+      p = h / (count - 1)
+      q = p / dRatio
+    }
+    const hCount = Math.ceil(w / q) + 1
+    const vCount = Math.ceil(h / p) + 1
+    const v = 0.5
+    return (
+      <Group>
+        {this.renderSelf(tincture2)}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            ctx.beginPath()
+            for (let row = 0; row < vCount; row++) {
+              for (let col = 0; col < hCount; col++) {
+                const x = col * q
+                const y = row * p
+                ctx.moveTo(x - (q / 2), y)
+                ctx.lineTo(x, y - (p / 2))
+                ctx.lineTo(x + (q / 2), y)
+                ctx.lineTo(x, y + (p / 2))
+                ctx.lineTo(x - (q / 2), y)
+                ctx.closePath()
+                if (type == LozengyType.Mascle) {
+                  ctx.moveTo(x - v * (q / 2), y)
+                  ctx.lineTo(x - v * (q / 2), y)
+                  ctx.lineTo(x, y + v * (p / 2))
+                  ctx.lineTo(x + v * (q / 2), y)
+                  ctx.lineTo(x, y - v * (p / 2))
+                  ctx.closePath()
+
+                  ctx.moveTo(x + q / 2 - v * (q / 2), y + p / 2)
+                  ctx.lineTo(x + q / 2 - v * (q / 2), y + p / 2)
+                  ctx.lineTo(x + q / 2, y + p / 2 + v * (p / 2))
+                  ctx.lineTo(x + q / 2 + v * (q / 2), y + p / 2)
+                  ctx.lineTo(x + q / 2, y + p / 2 - v * (p / 2))
+                  ctx.closePath()
+                } else if (type == LozengyType.Ruste) {
+                  ctx.moveTo(x, y)
+                  ctx.arc(x, y, v * q / 2, 0, Math.PI * 2, true)
+
+                  ctx.moveTo(x + q / 2, y + p / 2)
+                  ctx.arc(x + q / 2, y + p / 2, v * q / 2, 0, Math.PI * 2, false)
+                }
+              }
+            }
+          }}>
+          {this.renderSelf(tincture1)}
+        </Group>
+      </Group>
+    )
+  }
 
   renderColorTincture(colorTincture: ColorTincture): void {
     this.value = (
@@ -280,6 +438,10 @@ class PlainCrestRenderer extends CrestRenderer {
     let renderer = new PlainCrestRenderer(width, height)
     return renderer.render(visitable)
   }
+}
+
+enum LozengyType {
+  Normal, Mascle, Ruste
 }
 
 export default PlainCrestRenderer

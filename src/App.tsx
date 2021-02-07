@@ -7,13 +7,28 @@ import Crest from './model/Crest'
 import ColorTincture from './model/ColorTincture'
 import SolidField from './model/field/SolidField';
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField';
+import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture';
 
 function App() {
+  const black = "#000000"
+  const white = "#ffffff"
+  const red = "#ffb3ba"
+  const orange = "#ffdfba"
+  const yellow = "#ffffba"
+  const green = "#baffc9"
+  const blue = "#bae1ff"
+
   var crest = new Crest(
-    new PerPallDividedField(
-      new ColorTincture("#ff0000"),
-      new ColorTincture("#0000ff"),
-      new ColorTincture("#00ff00"),
+    new SolidField(
+      new Ruste(
+        new ColorTincture(red),
+        new ColorTincture(green),
+      ),
+      /*new ColorTincture(orange),
+      new Paly(
+        new ColorTincture(blue),
+        new ColorTincture(yellow)
+      )*/
     )
   )
   return (

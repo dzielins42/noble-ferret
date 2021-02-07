@@ -5,7 +5,9 @@ import Field from "./field/Field"
 class Crest implements Visitable<CrestRenderer> {
   readonly field: Field
 
-  constructor(field: Field) {
+  constructor(
+    field: Field
+  ) {
     this.field = field
   }
 
