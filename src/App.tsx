@@ -21,12 +21,16 @@ function App() {
 
   var crest = new Crest(
     new PerBendDividedField(
-      new ColorTincture(orange),
-      new ColorTincture(red)
+      //new Ruste(
+      new ColorTincture(green),
+      //  new ColorTincture(orange),
+      //),
+      new ColorTincture(red),
+      //new ColorTincture(blue),
     ),
     [
       new Saltire(
-        new ColorTincture(blue)
+        new ColorTincture(blue),
       )
     ]
   )

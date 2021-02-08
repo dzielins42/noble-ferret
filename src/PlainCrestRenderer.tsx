@@ -8,29 +8,42 @@ import SolidField from './model/field/SolidField'
 import Visitable from './Visitable'
 import Rectangle from './Rectangle'
 import Crest from './model/Crest'
-import { linear } from './MathUtils'
+import { linear, linearP } from './MathUtils'
 import BlankTexture from './model/BlankTexture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture'
 import Tincture from './model/Tincture'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
+import Escutcheon from './model/escutcheon/Escutcheon'
+import RectangleEscutcheon from './model/escutcheon/RectangleEscutcheon'
 
 class PlainCrestRenderer extends CrestRenderer {
 
   private readonly focusArea: Rectangle
+  private readonly escutcheon: Escutcheon
+  private readonly bounds: Rectangle
 
-  constructor(viewportWidth: number, viewportHeight: number) {
+  constructor(
+    viewportWidth: number,
+    viewportHeight: number,
+    escutcheon: Escutcheon
+  ) {
     super(viewportWidth, viewportHeight)
 
     const dimen = Math.min(viewportWidth, viewportHeight) * 0.75
     const x = (viewportWidth - dimen) / 2
     const y = (viewportHeight - dimen) / 2
     this.focusArea = new Rectangle(y, x, y + dimen, x + dimen)
+    //this.escutcheon = new RectangleEscutcheon(0, 0, viewportWidth, viewportHeight)
+    //this.escutcheon = new RectangleEscutcheon(x, y, dimen, dimen)
+    this.escutcheon = escutcheon
+    this.bounds = this.escutcheon.bounds
   }
 
   renderCrest(crest: Crest): void {
-    for (let i = 0; i < 10; i++) {
-
-    }
+    const x = this.escutcheon.dexter.x
+    const y = this.escutcheon.chief.y
+    const w = this.escutcheon.sinister.x - this.escutcheon.dexter.x
+    const h = this.escutcheon.base.y - this.escutcheon.chief.y
     this.value = (
       <Layer>
         {this.renderSelf(crest.field)}
@@ -38,11 +51,34 @@ class PlainCrestRenderer extends CrestRenderer {
           return this.renderSelf(ordinary)
         })}
         <Rect
-          x={this.focusArea.left}
-          y={this.focusArea.top}
-          width={this.focusArea.width()}
-          height={this.focusArea.height()}
+          x={x}
+          y={y}
+          width={w}
+          height={h}
           stroke="black"
+        />
+        <Rect
+          x={x}
+          y={y}
+          width={w}
+          height={w}
+          stroke="black"
+        />
+        <Shape
+          sceneFunc={(context, shape) => {
+            context.beginPath();
+            context.moveTo(this.bounds.left, this.bounds.top);
+            context.lineTo(this.bounds.right, this.bounds.top);
+            context.lineTo(this.bounds.right, this.bounds.top + this.bounds.width / 3);
+            context.arc(this.bounds.left, this.bounds.top + this.bounds.width / 3, this.bounds.width, 0, 60 * Math.PI / 180, false)
+            context.arc(this.bounds.right, this.bounds.top + this.bounds.width / 3, this.bounds.width, 120 * Math.PI / 180, Math.PI, false)
+            context.closePath();
+            // (!) Konva specific method, it is very important
+            context.fillStrokeShape(shape);
+          }}
+          //fill="#00D2FF55"
+          stroke="black"
+          strokeWidth={4}
         />
       </Layer>
     )
@@ -58,13 +94,24 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerFessDividedField(field: PerFessDividedField): void {
+    const fessPoint = this.escutcheon.fessPoint
+    const bounds = this.escutcheon.bounds
     this.value = (
       <Group>
-        <Group>
+        <Group
+          clipX={bounds.left}
+          clipY={bounds.top}
+          clipWidth={bounds.width}
+          clipHeight={fessPoint.y - bounds.top}
+        >
           {this.renderSelf(field.texture1)}
         </Group>
         <Group
-          y={this.viewportHeight / 2}>
+          clipX={bounds.left}
+          clipY={fessPoint.y}
+          clipWidth={bounds.width}
+          clipHeight={bounds.bottom - fessPoint.y}
+        >
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -72,13 +119,23 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerPaleDividedField(field: PerPaleDividedField): void {
+    const bounds = this.escutcheon.bounds
     this.value = (
       <Group>
-        <Group>
+        <Group
+          clipX={bounds.left}
+          clipY={bounds.top}
+          clipWidth={bounds.width / 2}
+          clipHeight={bounds.height}
+        >
           {this.renderSelf(field.texture1)}
         </Group>
         <Group
-          x={this.viewportWidth / 2}>
+          clipX={bounds.centerHorizontal}
+          clipY={bounds.top}
+          clipWidth={bounds.width / 2}
+          clipHeight={bounds.height}
+        >
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -86,21 +143,25 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerBendDividedField(field: PerBendDividedField): void {
-    const fun = linear(
-      this.focusArea.left,
-      field.sinister ? this.focusArea.bottom : this.focusArea.top,
-      this.focusArea.right,
-      field.sinister ? this.focusArea.top : this.focusArea.bottom
+    const bounds = this.bounds
+    const startPoint = field.sinister ? this.escutcheon.sinisterChief : this.escutcheon.dexterChief
+    const endPoint = field.sinister ? this.escutcheon.dexterBase : this.escutcheon.sinisterBase
+    const fun = linearP(
+      startPoint,
+      endPoint
     )
-    const q = field.sinister ? this.viewportWidth : 0
     this.value = (
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(0, fun(0))
-            ctx.lineTo(this.viewportWidth, fun(this.viewportWidth))
-            ctx.lineTo(this.viewportWidth - q, 0)
+            ctx.moveTo(bounds.left, fun(bounds.left))
+            ctx.lineTo(bounds.right, fun(bounds.right))
+            if (field.sinister) {
+              ctx.lineTo(bounds.left, bounds.top)
+            } else {
+              ctx.lineTo(bounds.right, bounds.top)
+            }
             ctx.closePath()
           }}>
           {this.renderSelf(field.texture1)}
@@ -108,9 +169,10 @@ class PlainCrestRenderer extends CrestRenderer {
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(0, fun(0))
-            ctx.lineTo(this.viewportWidth, fun(this.viewportWidth))
-            ctx.lineTo(q, this.viewportHeight)
+            ctx.moveTo(bounds.left, fun(bounds.left))
+            ctx.lineTo(bounds.right, fun(bounds.right))
+            ctx.lineTo(bounds.right, bounds.bottom)
+            ctx.lineTo(bounds.left, bounds.bottom)
             ctx.closePath()
           }}>
           {this.renderSelf(field.texture2)}
@@ -120,40 +182,42 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerSaltireDividedField(field: PerSaltireDividedField): void {
-    const fun1 = linear(
-      this.focusArea.left,
-      this.focusArea.top,
-      this.focusArea.right,
-      this.focusArea.bottom
+    const bounds = this.escutcheon.bounds
+    const fun1 = linearP(
+      this.escutcheon.dexterChief,
+      this.escutcheon.sinisterBase
     )
-    const fun2 = linear(
-      this.focusArea.left,
-      this.focusArea.bottom,
-      this.focusArea.right,
-      this.focusArea.top
+    const fun2 = linearP(
+      this.escutcheon.dexterBase,
+      this.escutcheon.sinisterChief
     )
     this.value = (
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(0, fun1(0))
-            ctx.lineTo(this.viewportWidth, fun1(this.viewportWidth))
-            ctx.lineTo(0, fun2(0))
-            ctx.lineTo(this.viewportWidth, fun2(this.viewportWidth))
+            ctx.moveTo(bounds.left, fun1(bounds.left))
+            ctx.lineTo(bounds.right, fun1(bounds.right))
+            ctx.lineTo(bounds.right, bounds.bottom)
+            ctx.lineTo(bounds.left, bounds.bottom)
+            ctx.lineTo(bounds.left, fun2(bounds.left))
+            ctx.lineTo(bounds.right, fun2(bounds.right))
+
             ctx.closePath()
-          }}>
+          }}
+        >
           {this.renderSelf(field.texture1)}
         </Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(0, fun1(0))
-            ctx.lineTo(this.viewportWidth, fun1(this.viewportWidth))
-            ctx.lineTo(this.viewportWidth, fun2(this.viewportWidth))
-            ctx.lineTo(0, fun2(0))
+            ctx.moveTo(bounds.left, fun1(bounds.left))
+            ctx.lineTo(bounds.right, fun1(bounds.right))
+            ctx.lineTo(bounds.right, fun2(bounds.right))
+            ctx.lineTo(bounds.left, fun2(bounds.left))
             ctx.closePath()
-          }}>
+          }}
+        >
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -161,22 +225,30 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerCrossDividedField(field: PerCrossDividedField): void {
-    const x = this.focusArea.centerHorizontal()
-    const y = this.focusArea.centerVertical()
+    const bounds = this.escutcheon.bounds
+    const fessPoint = this.escutcheon.fessPoint
+    const x = fessPoint.x
+    const y = fessPoint.y
     this.value = (
-      <Group>
+      <Group
+        clipX={bounds.left}
+        clipY={bounds.top}
+        clipWidth={bounds.width}
+        clipHeight={bounds.height}
+      >
         {this.renderSelf(field.texture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(0, 0)
-            ctx.lineTo(x, 0)
-            ctx.lineTo(x, this.viewportHeight)
-            ctx.lineTo(this.viewportWidth, this.viewportHeight)
-            ctx.lineTo(this.viewportWidth, y)
+            ctx.moveTo(bounds.left, bounds.top)
+            ctx.lineTo(x, bounds.top)
+            ctx.lineTo(x, bounds.bottom)
+            ctx.lineTo(bounds.right, bounds.bottom)
+            ctx.lineTo(bounds.right, y)
             ctx.lineTo(0, y)
             ctx.closePath()
-          }}>
+          }}
+        >
           {this.renderSelf(field.texture1)}
         </Group>
       </Group>
@@ -184,50 +256,39 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPerChevronDividedField(field: PerChevronDividedField): void {
-    const centerX = this.focusArea.centerHorizontal()
-    const centerY = this.focusArea.centerVertical()
-    const fun1 = linear(
-      this.focusArea.left,
-      !field.inverted ? this.focusArea.bottom : this.focusArea.top,
-      this.focusArea.right,
-      !field.inverted ? this.focusArea.top : this.focusArea.bottom
-    )
-    const fun2 = linear(
-      this.focusArea.left,
-      field.inverted ? this.focusArea.bottom : this.focusArea.top,
-      this.focusArea.right,
-      field.inverted ? this.focusArea.top : this.focusArea.bottom
-    )
+    const bounds = this.escutcheon.bounds
+    const fessPoint = this.escutcheon.fessPoint
+    const fun1 =
+      field.inverted ? this.escutcheon.bendFunction : this.escutcheon.bendSinisterFunction
+    const fun2 =
+      field.inverted ? this.escutcheon.bendSinisterFunction : this.escutcheon.bendFunction
     const fun = function(x: number) {
-      if (x < centerX) {
+      if (x < fessPoint.x) {
         return fun1(x)
-      } else if (x > centerX) {
+      } else if (x > fessPoint.x) {
         return fun2(x)
       } else {
-        return centerY
+        return fessPoint.y
       }
     }
 
     this.value = (
-      <Group>
+      <Group
+        clipX={bounds.left}
+        clipY={bounds.top}
+        clipWidth={bounds.width}
+        clipHeight={bounds.height}
+      >
         {this.renderSelf(field.texture1)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
-            ctx.moveTo(
-              0,
-              fun(0)
-            )
-            ctx.lineTo(
-              this.focusArea.centerHorizontal(),
-              this.focusArea.centerVertical()
-            )
-            ctx.lineTo(
-              this.viewportWidth,
-              fun(this.viewportWidth)
-            )
+            ctx.moveTo(bounds.left, fun(bounds.left))
+            ctx.lineTo(fessPoint.x, fessPoint.y)
+            ctx.lineTo(bounds.right, fun(bounds.right))
             ctx.closePath()
-          }}>
+          }}
+        >
           {this.renderSelf(field.texture2)}
         </Group>
       </Group>
@@ -254,17 +315,21 @@ class PlainCrestRenderer extends CrestRenderer {
 
   // Variation
   renderBarry(barry: Barry): void {
-    const h = this.viewportHeight / (barry.count * 2)
-    const w = this.viewportWidth
+    const h = this.bounds.height / (barry.count * 2)
+    const w = this.bounds.width
     this.value = (
       <Group>
         {this.renderSelf(barry.tincture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
             for (let i = 0; i < barry.count; i++) {
-              ctx.rect(0, 2 * i * h, w, h)
+              ctx.rect(
+                this.bounds.left, this.bounds.top + 2 * i * h,
+                w, h
+              )
             }
-          }}>
+          }}
+        >
           {this.renderSelf(barry.tincture1)}
         </Group>
       </Group>
@@ -272,17 +337,21 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderPaly(paly: Paly): void {
-    const w = this.viewportWidth / (paly.count * 2)
-    const h = this.viewportHeight
+    const w = this.bounds.width / (paly.count * 2)
+    const h = this.bounds.height
     this.value = (
       <Group>
         {this.renderSelf(paly.tincture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
             for (let i = 0; i < paly.count; i++) {
-              ctx.rect(2 * i * w, 0, w, h)
+              ctx.rect(
+                this.bounds.left + 2 * i * w, this.bounds.top,
+                w, h
+              )
             }
-          }}>
+          }}
+        >
           {this.renderSelf(paly.tincture1)}
         </Group>
       </Group>
@@ -290,16 +359,16 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderBendy(bendy: Bendy): void {
-    const w = this.viewportWidth
-    const h = this.viewportHeight
+    const w = this.bounds.width
+    const h = this.bounds.height
     const dimen = Math.SQRT2 * (w + h) / 2
     const t = dimen / (bendy.count * 2)
     this.value = (
       <Group>
         {this.renderSelf(bendy.tincture2)}
         <Group
-          x={w / 2}
-          y={h / 2}
+          x={this.bounds.centerHorizontal}
+          y={this.bounds.centerVertical}
           offsetX={dimen / 2}
           offsetY={dimen / 2}
           rotation={bendy.sinister ? 45 : -45}
@@ -315,11 +384,11 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderChequy(chequy: Chequy): void {
-    const w = this.viewportWidth
-    const h = this.viewportHeight
+    const w = this.bounds.width
+    const h = this.bounds.height
     const d = Math.min(w, h) / (chequy.count * 2)
-    const hCount = Math.ceil(w / d)
-    const vCount = Math.ceil(h / d)
+    const hCount = Math.ceil(w / d / 2)
+    const vCount = Math.ceil(h / d / 2)
     this.value = (
       <Group>
         {this.renderSelf(chequy.tincture2)}
@@ -327,8 +396,18 @@ class PlainCrestRenderer extends CrestRenderer {
           clipFunc={(ctx: Konva.Context) => {
             for (let row = 0; row < vCount; row++) {
               for (let col = 0; col < hCount; col++) {
-                ctx.rect(row * 2 * d, col * 2 * d, d, d)
-                ctx.rect((row * 2 + 1) * d, (col * 2 + 1) * d, d, d)
+                ctx.rect(
+                  this.bounds.left + row * 2 * d,
+                  this.bounds.top + col * 2 * d,
+                  d,
+                  d
+                )
+                ctx.rect(
+                  this.bounds.left + (row * 2 + 1) * d,
+                  this.bounds.top + (col * 2 + 1) * d,
+                  d,
+                  d
+                )
               }
             }
           }}>
@@ -366,10 +445,10 @@ class PlainCrestRenderer extends CrestRenderer {
     dRatio: number,
     type: LozengyType = LozengyType.Normal
   ): React.ReactNode {
-    const w = this.viewportWidth
-    const h = this.viewportHeight
+    const w = this.bounds.width
+    const h = this.bounds.height
     let p: number, q: number
-    if (w < h) {
+    if (w <= h) {
       q = w / (count - 1)
       p = q * dRatio
     } else {
@@ -385,6 +464,7 @@ class PlainCrestRenderer extends CrestRenderer {
         <Group
           clipFunc={(ctx: Konva.Context) => {
             ctx.beginPath()
+            ctx.translate(this.bounds.left, this.bounds.top)
             for (let row = 0; row < vCount; row++) {
               for (let col = 0; col < hCount; col++) {
                 const x = col * q
@@ -427,13 +507,13 @@ class PlainCrestRenderer extends CrestRenderer {
 
   // Ordinary
   renderPale(pale: Pale): void {
-    const w = this.focusArea.width() * this.T
+    const w = this.bounds.width * this.T
     this.value = (
       <Group
-        clipX={this.focusArea.centerHorizontal() - w / 2}
-        clipY={0}
+        clipX={this.bounds.centerHorizontal - w / 2}
+        clipY={this.bounds.top}
         clipWidth={w}
-        clipHeight={this.viewportHeight}
+        clipHeight={this.bounds.height}
       >
         {this.renderSelf(pale.texture)}
       </Group >
@@ -441,12 +521,12 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderFess(fess: Fess): void {
-    const h = this.focusArea.height() * this.T
+    const h = this.bounds.height * this.T
     this.value = (
       <Group
-        clipX={0}
-        clipY={this.focusArea.centerVertical() - h / 2}
-        clipWidth={this.viewportWidth}
+        clipX={this.bounds.left}
+        clipY={this.escutcheon.fessPoint.y - h / 2}
+        clipWidth={this.bounds.width}
         clipHeight={h}
       >
         {this.renderSelf(fess.texture)}
@@ -466,19 +546,24 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderBend(bend: Bend): void {
-    const w = this.viewportWidth
-    const h = this.viewportHeight
-    const t = Math.min(this.focusArea.width(), this.focusArea.height()) * this.T
+    const bounds = this.bounds
+    const fessPoint = this.escutcheon.fessPoint
+    const w = bounds.width
+    const h = bounds.height
+    const t = Math.min(w, h * this.T)
     const dimen = Math.SQRT2 * (w + h) / 2
-    const q = Math.atan(
-      this.focusArea.height() / this.focusArea.width()
-    )
+
+    const f = this.escutcheon.bendFunction
+    const b = f(0)
+    const a = (f(1) - b) / 1
+    const q = Math.atan(a)
+
     this.value = (
       <Group
         clipFunc={(ctx: Konva.Context) => {
           ctx.translate(
-            this.focusArea.centerHorizontal(),
-            this.focusArea.centerVertical()
+            fessPoint.x,
+            fessPoint.y
           )
           ctx.rotate(q * (bend.sinister ? -1 : 1))
           ctx.rect(-dimen / 2, -t / 2, dimen, t)
@@ -502,6 +587,20 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   renderColorTincture(colorTincture: ColorTincture): void {
+    const bounds = this.escutcheon.bounds
+    const x = bounds.left
+    const y = bounds.top
+    const w = bounds.width
+    const h = bounds.height
+    /*this.value = (
+      <Rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        fill={colorTincture.colorHex}
+      />
+    )*/
     this.value = (
       <Rect
         x={0}
@@ -516,9 +615,10 @@ class PlainCrestRenderer extends CrestRenderer {
   private renderSelf(
     visitable: Visitable<CrestRenderer>,
     width: number = this.viewportWidth,
-    height: number = this.viewportHeight
+    height: number = this.viewportHeight,
+    escutcheon: Escutcheon = this.escutcheon
   ): React.ReactNode {
-    let renderer = new PlainCrestRenderer(width, height)
+    let renderer = new PlainCrestRenderer(width, height, escutcheon)
     return renderer.render(visitable)
   }
 

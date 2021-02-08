@@ -16,20 +16,20 @@ class Rectangle {
     this.right = right
   }
 
-  width(): number {
+  get width(): number {
     return this.right - this.left
   }
 
-  height(): number {
+  get height(): number {
     return this.bottom - this.top
   }
 
-  centerHorizontal(): number {
-    return this.left + this.width() / 2
+  get centerHorizontal(): number {
+    return this.left + this.width / 2
   }
 
-  centerVertical(): number {
-    return this.top + this.height() / 2
+  get centerVertical(): number {
+    return this.top + this.height / 2
   }
 }
 
