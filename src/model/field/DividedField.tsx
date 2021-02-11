@@ -1,5 +1,5 @@
 import { CrestRenderer } from "../../CrestRenderer";
-import Texture from "../Texture";
+import Texture from "../texture/Texture";
 import Field from "./Field";
 
 abstract class DividedField implements Field {

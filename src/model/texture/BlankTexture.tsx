@@ -1,4 +1,4 @@
-import { CrestRenderer } from "../CrestRenderer";
+import { CrestRenderer } from "../../CrestRenderer";
 import Texture from "./Texture";
 
 class BlankTexture implements Texture {

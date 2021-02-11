@@ -4,11 +4,11 @@ import './App.css';
 import { Stage, Layer, Rect, Text, Circle, Line } from 'react-konva';
 import CrestPreview from './CrestPreview'
 import Crest from './model/Crest'
-import ColorTincture from './model/ColorTincture'
 import SolidField from './model/field/SolidField';
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField';
-import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture';
+import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture';
 import { Saltire, Bend, Cross, Fess, Pale } from './model/Ordinary';
+import ColorTincture from './model/texture/ColorTincture';
 
 function App() {
   const black = "#000000"

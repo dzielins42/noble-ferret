@@ -2,23 +2,22 @@ import { CrestRenderer } from './CrestRenderer'
 import Konva from 'konva'
 import { Shape, KonvaNodeComponent, Stage, Layer, Rect, Text, Circle, Line, Group } from 'react-konva'
 import React from 'react'
-import ColorTincture from './model/ColorTincture'
+import ColorTincture from './model/texture/ColorTincture'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
 import Visitable from './Visitable'
-import Rectangle from './Rectangle'
 import Crest from './model/Crest'
 import { linear, linearP } from './MathUtils'
-import BlankTexture from './model/BlankTexture'
-import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/VariationTexture'
-import Tincture from './model/Tincture'
+import BlankTexture from './model/texture/BlankTexture'
+import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
+import Tincture from './model/texture/Tincture'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
 import Escutcheon from './model/escutcheon/Escutcheon'
 import RectangleEscutcheon from './model/escutcheon/RectangleEscutcheon'
+import Rectangle from './geometry/Rectangle'
 
 class PlainCrestRenderer extends CrestRenderer {
 
-  private readonly focusArea: Rectangle
   private readonly escutcheon: Escutcheon
   private readonly bounds: Rectangle
 
@@ -32,9 +31,6 @@ class PlainCrestRenderer extends CrestRenderer {
     const dimen = Math.min(viewportWidth, viewportHeight) * 0.75
     const x = (viewportWidth - dimen) / 2
     const y = (viewportHeight - dimen) / 2
-    this.focusArea = new Rectangle(y, x, y + dimen, x + dimen)
-    //this.escutcheon = new RectangleEscutcheon(0, 0, viewportWidth, viewportHeight)
-    //this.escutcheon = new RectangleEscutcheon(x, y, dimen, dimen)
     this.escutcheon = escutcheon
     this.bounds = this.escutcheon.bounds
   }

@@ -1,6 +1,6 @@
 import { CrestRenderer } from '../../CrestRenderer'
+import Texture from '../texture/Texture'
 import Field from './Field'
-import Texture from '../Texture'
 
 class SolidField implements Field {
   readonly texture: Texture

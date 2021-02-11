@@ -1,4 +1,4 @@
-import { CrestRenderer } from '../CrestRenderer'
+import { CrestRenderer } from '../../CrestRenderer'
 import Tincture from './Tincture'
 
 class ColorTincture implements Tincture {

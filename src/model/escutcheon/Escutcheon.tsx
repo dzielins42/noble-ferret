@@ -1,6 +1,6 @@
 import Point from "../../geometry/Point"
+import Rectangle from "../../geometry/Rectangle"
 import { linearP } from "../../MathUtils"
-import Rectangle from "../../Rectangle"
 
 abstract class Escutcheon {
 

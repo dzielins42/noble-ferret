@@ -1,6 +1,6 @@
 import { CrestRenderer } from "../CrestRenderer";
 import Visitable from "../Visitable";
-import Texture from "./Texture";
+import Texture from "./texture/Texture";
 
 export abstract class Ordinary implements Visitable<CrestRenderer>  {
   readonly texture: Texture
