@@ -1,13 +1,13 @@
 import { CrestRenderer } from './CrestRenderer'
 import Konva from 'konva'
-import { Shape, KonvaNodeComponent, Stage, Layer, Rect, Text, Circle, Line, Group } from 'react-konva'
+import { Shape, KonvaNodeComponent, Stage, Layer, Rect, Text, Circle, Line, Group, Star } from 'react-konva'
 import React from 'react'
 import ColorTincture from './model/texture/ColorTincture'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
 import Visitable from './Visitable'
 import Crest from './model/Crest'
-import { linear, linearP } from './MathUtils'
+import { linear, linearP, slope } from './MathUtils'
 import BlankTexture from './model/texture/BlankTexture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
 import Tincture from './model/texture/Tincture'
@@ -15,6 +15,10 @@ import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
 import Escutcheon from './model/escutcheon/Escutcheon'
 import RectangleEscutcheon from './model/escutcheon/RectangleEscutcheon'
 import Rectangle from './geometry/Rectangle'
+import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary'
+import { Charge } from './model/Charge'
+import Point from './geometry/Point'
+import LozengeType from './model/LozengeType'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -430,7 +434,7 @@ class PlainCrestRenderer extends CrestRenderer {
   renderRuste(ruste: Ruste): void {
     this.value = this.innerRenderLozengy(
       ruste.tincture1, ruste.tincture2,
-      ruste.count, 1.5, LozengyType.Ruste
+      ruste.count, 1.5, LozengeType.Ruste
     )
   }
 
@@ -439,7 +443,7 @@ class PlainCrestRenderer extends CrestRenderer {
     tincture2: Tincture,
     count: number,
     dRatio: number,
-    type: LozengyType = LozengyType.Normal
+    type: LozengeType = LozengeType.Normal
   ): React.ReactNode {
     const w = this.bounds.width
     const h = this.bounds.height
@@ -471,7 +475,7 @@ class PlainCrestRenderer extends CrestRenderer {
                 ctx.lineTo(x, y + (p / 2))
                 ctx.lineTo(x - (q / 2), y)
                 ctx.closePath()
-                if (type == LozengyType.Mascle) {
+                if (type == LozengeType.Mascle) {
                   ctx.moveTo(x - v * (q / 2), y)
                   ctx.lineTo(x - v * (q / 2), y)
                   ctx.lineTo(x, y + v * (p / 2))
@@ -485,7 +489,7 @@ class PlainCrestRenderer extends CrestRenderer {
                   ctx.lineTo(x + q / 2 + v * (q / 2), y + p / 2)
                   ctx.lineTo(x + q / 2, y + p / 2 - v * (p / 2))
                   ctx.closePath()
-                } else if (type == LozengyType.Ruste) {
+                } else if (type == LozengeType.Ruste) {
                   ctx.moveTo(x, y)
                   ctx.arc(x, y, v * q / 2, 0, Math.PI * 2, true)
 
@@ -503,81 +507,427 @@ class PlainCrestRenderer extends CrestRenderer {
 
   // Ordinary
   renderPale(pale: Pale): void {
-    const w = this.bounds.width * this.T
+    const chargesCount = this.assertChargesCount(
+      pale.charges, 5
+    )
+
+    const bounds = this.bounds
+    const escutcheon = this.escutcheon
+
+    const w = escutcheon.paleWidth
+    const h = bounds.height
+
+    const totalHeight = escutcheon.middleBase.y - escutcheon.middleChief.y
+    const chargeHeight = Math.min(
+      w * this.CONTENT_TO_SPACE_RATIO,
+      (totalHeight * this.CONTENT_TO_SPACE_RATIO) / chargesCount
+    )
+    const spacerHeight = (totalHeight - chargeHeight * chargesCount) / (chargesCount + 1)
+
+    const charges = []
+
+    for (let i = 0; i < chargesCount; i++) {
+      const x = bounds.centerHorizontal - chargeHeight / 2
+      const y = escutcheon.middleChief.y + spacerHeight + i * (chargeHeight + spacerHeight)
+      charges.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(pale.charges[i], chargeHeight, chargeHeight)}
+        </Group>
+      )
+    }
+
     this.value = (
       <Group
-        clipX={this.bounds.centerHorizontal - w / 2}
-        clipY={this.bounds.top}
+        clipX={bounds.centerHorizontal - w / 2}
+        clipY={bounds.top}
         clipWidth={w}
-        clipHeight={this.bounds.height}
+        clipHeight={h}
       >
         {this.renderSelf(pale.texture)}
+        {charges}
       </Group >
     )
   }
 
   renderFess(fess: Fess): void {
-    const h = this.bounds.height * this.T
+    const chargesCount = this.assertChargesCount(
+      fess.charges, 5
+    )
+
+    const bounds = this.bounds
+    const escutcheon = this.escutcheon
+
+    const w = bounds.width
+    const h = escutcheon.fessHeight
+
+    const totalWidth = escutcheon.sinister.x - escutcheon.dexter.x
+    const chargeWidth = Math.min(
+      h * this.CONTENT_TO_SPACE_RATIO,
+      (totalWidth * this.CONTENT_TO_SPACE_RATIO) / chargesCount
+    )
+    const spacerWidth = (totalWidth - chargeWidth * chargesCount) / (chargesCount + 1)
+
+    const charges = []
+
+    for (let i = 0; i < chargesCount; i++) {
+      const x = escutcheon.dexter.x + spacerWidth + i * (chargeWidth + spacerWidth)
+      const y = escutcheon.fessPoint.y - chargeWidth / 2
+
+      charges.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(fess.charges[i], chargeWidth, chargeWidth)}
+        </Group>
+      )
+    }
+
     this.value = (
       <Group
-        clipX={this.bounds.left}
-        clipY={this.escutcheon.fessPoint.y - h / 2}
-        clipWidth={this.bounds.width}
+        clipX={bounds.left}
+        clipY={escutcheon.fessPoint.y - h / 2}
+        clipWidth={w}
         clipHeight={h}
       >
         {this.renderSelf(fess.texture)}
+        {charges}
       </Group >
     )
   }
 
   renderCross(cross: Cross): void {
-    const pale = new Pale(cross.texture)
-    const fess = new Fess(cross.texture)
+    const chargesCount = this.assertChargesCount(
+      cross.charges, 5
+    )
+
+    const bounds = this.bounds
+    const escutcheon = this.escutcheon
+    const fessPoint = this.escutcheon.fessPoint
+    const dimen = Math.min(
+      escutcheon.fessHeight, escutcheon.paleWidth
+    )
+    const halfDimen = dimen / 2
+
+    const chargeDimen = dimen * this.CONTENT_TO_SPACE_RATIO
+
+    let chargePoints: Point[] = []
+    const central = fessPoint
+    const dexter = Point.between(
+      fessPoint, new Point(escutcheon.dexter.x - chargeDimen / 2, fessPoint.y)
+    )
+    const sinister = Point.between(
+      fessPoint, new Point(escutcheon.sinister.x + chargeDimen / 2, fessPoint.y)
+    )
+    const chief = Point.between(
+      fessPoint, new Point(fessPoint.x, escutcheon.chief.y - chargeDimen / 2)
+    )
+    const base = Point.between(
+      fessPoint, new Point(fessPoint.x, escutcheon.base.y + chargeDimen / 2)
+    )
+
+    if (chargesCount === 1) {
+      chargePoints = [central]
+    } else if (chargesCount === 2) {
+      chargePoints = [dexter, sinister]
+    } else if (chargesCount === 3) {
+      chargePoints = [dexter, sinister, chief]
+    } else if (chargesCount === 4) {
+      chargePoints = [dexter, sinister, chief, base]
+    } else if (chargesCount === 5) {
+      chargePoints = [central, dexter, sinister, chief, base]
+    }
+    const charges = chargePoints.map((point, index) => {
+      return < Group
+        x={point.x - chargeDimen / 2}
+        y={point.y - chargeDimen / 2} >
+        {this.renderSelf(cross.charges[index], chargeDimen, chargeDimen)}
+      </Group >
+    })
+
     this.value = (
-      <Group>
-        {this.renderSelf(pale)}
-        {this.renderSelf(fess)}
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          ctx.moveTo(bounds.centerHorizontal - halfDimen, bounds.top)
+          ctx.lineTo(bounds.centerHorizontal + halfDimen, bounds.top)
+          ctx.lineTo(bounds.centerHorizontal + halfDimen, fessPoint.y - halfDimen)
+          ctx.lineTo(bounds.right, fessPoint.y - halfDimen)
+          ctx.lineTo(bounds.right, fessPoint.y + halfDimen)
+          ctx.lineTo(bounds.centerHorizontal + halfDimen, fessPoint.y + halfDimen)
+          ctx.lineTo(bounds.centerHorizontal + halfDimen, bounds.bottom)
+          ctx.lineTo(bounds.centerHorizontal - halfDimen, bounds.bottom)
+          ctx.lineTo(bounds.centerHorizontal - halfDimen, fessPoint.y + halfDimen)
+          ctx.lineTo(bounds.left, fessPoint.y + halfDimen)
+          ctx.lineTo(bounds.left, fessPoint.y - halfDimen)
+          ctx.lineTo(bounds.centerHorizontal - halfDimen, fessPoint.y - halfDimen)
+          ctx.closePath()
+        }}>
+        {this.renderSelf(cross.texture)}
+        {charges}
       </Group>
     )
   }
 
   renderBend(bend: Bend): void {
+    const chargesCount = this.assertChargesCount(
+      bend.charges, 5
+    )
+
     const bounds = this.bounds
-    const fessPoint = this.escutcheon.fessPoint
+    const escutcheon = this.escutcheon
+    const fessPoint = escutcheon.fessPoint
+
     const w = bounds.width
     const h = bounds.height
     const t = Math.min(w, h * this.T)
     const dimen = Math.SQRT2 * (w + h) / 2
 
-    const f = this.escutcheon.bendFunction
+    const f = bend.sinister ? escutcheon.bendSinisterFunction : escutcheon.bendFunction
     const b = f(0)
     const a = (f(1) - b) / 1
     const q = Math.atan(a)
 
+    // Initial line calculations
+    let startPoint = bend.sinister ? escutcheon.dexterBase : escutcheon.dexterChief
+    let endPoint = bend.sinister ? escutcheon.sinisterChief : escutcheon.sinisterBase
+    let totalSpace = startPoint.distance(endPoint)
+    const dX = (endPoint.x - startPoint.x) / totalSpace
+    const dY = (endPoint.y - startPoint.y) / totalSpace
+    // Adding padding
+    const fess2Start = fessPoint.distance(startPoint)
+    const fess2End = fessPoint.distance(endPoint)
+    const padding = Math.min(fess2Start, fess2End)
+    startPoint = new Point(
+      fessPoint.x - padding * dX,
+      fessPoint.y - padding * dY
+    )
+    endPoint = new Point(
+      fessPoint.x + padding * dX,
+      fessPoint.y + padding * dY
+    )
+    totalSpace = startPoint.distance(endPoint)
+
+    const halfSqrt2 = Math.SQRT2 / 2
+
+    const chargeSize = Math.min(
+      t * this.CONTENT_TO_SPACE_RATIO,
+      (totalSpace * this.CONTENT_TO_SPACE_RATIO) / chargesCount
+    )
+    const spacerSize = (totalSpace - (chargeSize * chargesCount)) / (chargesCount + 1)
+    const charges = []
+    for (let i = 0; i < chargesCount; i++) {
+      const d = i * (spacerSize + chargeSize) + spacerSize + chargeSize / 2
+      const x = startPoint.x + d * dX - (chargeSize * halfSqrt2 / 2)
+      const y = startPoint.y + d * dY - (chargeSize * halfSqrt2 / 2)
+      charges.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(bend.charges[i], chargeSize * halfSqrt2, chargeSize * halfSqrt2)}
+        </Group>
+      )
+    }
+
     this.value = (
-      <Group
-        clipFunc={(ctx: Konva.Context) => {
-          ctx.translate(
-            fessPoint.x,
-            fessPoint.y
-          )
-          ctx.rotate(q * (bend.sinister ? -1 : 1))
-          ctx.rect(-dimen / 2, -t / 2, dimen, t)
-          ctx.reset()
-        }}
-      >
-        {this.renderSelf(bend.texture)}
+      <Group>
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            ctx.translate(
+              fessPoint.x,
+              fessPoint.y
+            )
+            ctx.rotate(q)
+            ctx.rect(-dimen / 2, -t / 2, dimen, t)
+            ctx.reset()
+          }}
+        >
+          {this.renderSelf(bend.texture)}
+        </Group>
+        {charges}
       </Group>
     )
   }
 
   renderSaltire(saltire: Saltire): void {
-    const bend = new Bend(saltire.texture, false)
-    const bendSinister = new Bend(saltire.texture, true)
+    const bounds = this.bounds
+    const escutcheon = this.escutcheon
+    const fessPoint = escutcheon.fessPoint
+
+    const w = bounds.width
+    const h = bounds.height
+    const t = Math.min(w, h * this.T)
+    const dimen = Math.SQRT2 * (w + h) / 2
+
+    const q1 = slope(escutcheon.bendFunction)
+    const q2 = slope(escutcheon.bendSinisterFunction)
+
+    const chargesCount = this.assertChargesCount(
+      saltire.charges, 5
+    )
+    const chargeSize = 0.5 * Math.SQRT2 * t * this.CONTENT_TO_SPACE_RATIO
+    let chargePoints: Point[] = []
+    const central = fessPoint
+    const dexterChief = Point.between(
+      fessPoint, escutcheon.dexterChief
+    )
+    const sinisterChief = Point.between(
+      fessPoint, escutcheon.sinisterChief
+    )
+    const dexterBase = Point.between(
+      fessPoint, escutcheon.dexterBase
+    )
+    const sinisterBase = Point.between(
+      fessPoint, escutcheon.sinisterBase
+    )
+    if (chargesCount === 1) {
+      chargePoints = [central]
+    } else if (chargesCount === 2) {
+      chargePoints = [dexterChief, sinisterChief]
+    } else if (chargesCount === 3) {
+      chargePoints = [central, dexterChief, sinisterChief]
+    } else if (chargesCount === 4) {
+      chargePoints = [dexterChief, sinisterChief, dexterBase, sinisterBase]
+    } else if (chargesCount === 5) {
+      chargePoints = [central, dexterChief, sinisterChief, dexterBase, sinisterBase]
+    }
+    const charges = chargePoints.map((point, index) => {
+      return < Group
+        x={point.x - chargeSize / 2}
+        y={point.y - chargeSize / 2} >
+        {this.renderSelf(saltire.charges[index], chargeSize, chargeSize)}
+      </Group >
+    })
+
     this.value = (
       <Group>
-        {this.renderSelf(bend)}
-        {this.renderSelf(bendSinister)}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            ctx.translate(
+              fessPoint.x,
+              fessPoint.y
+            )
+            ctx.rotate(q1)
+            ctx.rect(-dimen / 2, -t / 2, dimen, t)
+            ctx.reset()
+            ctx.translate(
+              fessPoint.x,
+              fessPoint.y
+            )
+            ctx.rotate(q2)
+            ctx.rect(-dimen / 2, -t / 2, dimen, t)
+            ctx.reset()
+          }}
+        >
+          {this.renderSelf(saltire.texture)}
+        </Group>
+        {charges}
+      </Group>
+    )
+  }
+
+  // Mobile Subordinary
+  renderRoundel(roundel: Roundel): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h)
+
+    this.value = (
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          ctx.arc(
+            w / 2, h / 2,
+            dimen / 2,
+            0, Math.PI * 2,
+            false
+          )
+        }}>
+        {this.renderSelf(roundel.tincture)}
+      </Group>
+    )
+  }
+
+  renderBillet(billet: Billet): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h)
+
+    this.value = (
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          ctx.rect(
+            (w - dimen * 0.5) / 2,
+            (h - dimen) / 2,
+            0.5 * dimen,
+            dimen
+          )
+        }}>
+        {this.renderSelf(billet.tincture)}
+      </Group>
+    )
+  }
+
+  renderLozenge(lozenge: Lozenge): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h) / 2
+    const dimen1 = lozenge.ratio > 1 ? dimen / lozenge.ratio : dimen
+    const dimen2 = lozenge.ratio > 1 ? dimen : dimen * lozenge.ratio
+    const x = w / 2
+    const y = h / 2
+    const v = 0.5
+
+    this.value = (
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          ctx.moveTo(x, y - dimen2)
+          ctx.lineTo(x + dimen1, y)
+          ctx.lineTo(x, y + dimen2)
+          ctx.lineTo(x - dimen1, y)
+          ctx.closePath()
+          if (lozenge.type === LozengeType.Mascle) {
+            ctx.moveTo(x, y - dimen2 * v)
+            ctx.lineTo(x - dimen1 * v, y)
+            ctx.lineTo(x, y + dimen2 * v)
+            ctx.lineTo(x + dimen1 * v, y)
+            ctx.closePath()
+          } else if (lozenge.type === LozengeType.Ruste) {
+            ctx.arc(x, y, Math.min(dimen1, dimen2) * v, 0, Math.PI * 2, true)
+          }
+        }}>
+        {this.renderSelf(lozenge.tincture)}
+      </Group>
+    )
+  }
+
+  renderMullet(mullet: Mullet): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h) / 2
+
+    this.value = (
+      <Group
+        clipFunc={(ctx: Konva.Context) => {
+          let x, y
+          let r = Math.PI / 2 * 3
+          const step = Math.PI / mullet.points
+          ctx.beginPath()
+          for (let i = 0; i < mullet.points; i++) {
+            x = w / 2 + Math.cos(r) * dimen
+            y = h / 2 + Math.sin(r) * dimen
+            ctx.lineTo(x, y)
+            r += step
+            x = w / 2 + Math.cos(r) * dimen / 2
+            y = h / 2 + Math.sin(r) * dimen / 2
+            ctx.lineTo(x, y)
+            r += step
+          }
+          if (mullet.pierced) {
+            ctx.moveTo(w / 2, h / 2)
+            ctx.arc(w / 2, h / 2, dimen / 4, 0, Math.PI * 2, true)
+          }
+        }}>
+        {this.renderSelf(mullet.tincture)}
       </Group>
     )
   }
@@ -608,6 +958,14 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
+  private assertChargesCount(charges: Charge[], max: number): number {
+    if (charges.length > max) {
+      console.warn("Only up to " + max + " charges is supported!")
+      console.warn("From " + charges.length + " only " + max + " will be used")
+    }
+    return Math.min(charges.length, max)
+  }
+
   private renderSelf(
     visitable: Visitable<CrestRenderer>,
     width: number = this.viewportWidth,
@@ -619,10 +977,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   private readonly T: number = 0.25
-}
-
-enum LozengyType {
-  Normal, Mascle, Ruste
+  private readonly CONTENT_TO_SPACE_RATIO = 0.666
 }
 
 export default PlainCrestRenderer

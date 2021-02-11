@@ -16,6 +16,14 @@ class Point {
       (a.y + b.y) / 2
     )
   }
+
+  distance(other: Point): number {
+    return Math.sqrt(
+      (this.x - other.x) * (this.x - other.x)
+      +
+      (this.y - other.y) * (this.y - other.y)
+    )
+  }
 }
 
 export default Point

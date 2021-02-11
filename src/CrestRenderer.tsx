@@ -1,6 +1,7 @@
 import Crest from './model/Crest'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
+import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
 import ColorTincture from './model/texture/ColorTincture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
@@ -47,6 +48,11 @@ export abstract class CrestRenderer {
   abstract renderCross(cross: Cross): void
   abstract renderBend(bend: Bend): void
   abstract renderSaltire(saltire: Saltire): void
+  // Mobile Subordinary
+  abstract renderRoundel(roundel: Roundel): void
+  abstract renderBillet(billet: Billet): void
+  abstract renderLozenge(lozenge: Lozenge): void
+  abstract renderMullet(mullet: Mullet): void
 
   abstract renderColorTincture(colorTincture: ColorTincture): void
 }

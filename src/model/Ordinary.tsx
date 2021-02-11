@@ -1,13 +1,13 @@
 import { CrestRenderer } from "../CrestRenderer";
 import Visitable from "../Visitable";
+import { Charge } from "./Charge";
 import Texture from "./texture/Texture";
 
 export abstract class Ordinary implements Visitable<CrestRenderer>  {
-  readonly texture: Texture
-
-  constructor(texture: Texture) {
-    this.texture = texture
-  }
+  constructor(
+    readonly texture: Texture,
+    readonly charges: Charge[] = []
+  ) { }
 
   abstract accept(visitor: CrestRenderer): void
 }
@@ -35,9 +35,10 @@ export class Bend extends Ordinary {
 
   constructor(
     texture: Texture,
+    charges: Charge[] = [],
     sinister: boolean = false
   ) {
-    super(texture)
+    super(texture, charges)
     this.sinister = sinister
   }
 

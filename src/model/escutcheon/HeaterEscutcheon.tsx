@@ -32,19 +32,27 @@ class HeaterEscutcheon extends Escutcheon {
   get base(): Point {
     return new Point(
       this.x + 1.5 * this.unitSize,
-      this.y + 4 * this.unitSize
+      this.y + (1 + Math.sqrt(6.75)) * this.unitSize
     )
   }
   get dexterBase(): Point {
     return new Point(
-      this.x,
-      this.y + 3 * this.unitSize
+      // Exact point
+      this.x + (3 - this.P) * this.unitSize,
+      this.y + (this.P) * this.unitSize
+      // Simple point
+      //this.x,
+      //this.y + 3 * this.unitSize
     )
   }
   get sinisterBase(): Point {
     return new Point(
-      this.x + 3 * this.unitSize,
-      this.y + 3 * this.unitSize
+      // Exact point
+      this.x + (this.P) * this.unitSize,
+      this.y + (this.P) * this.unitSize
+      // Simple point
+      //this.x + 3 * this.unitSize,
+      //this.y + 3 * this.unitSize
     )
   }
   get fessPoint(): Point {
@@ -53,6 +61,8 @@ class HeaterEscutcheon extends Escutcheon {
       this.y + 1.5 * this.unitSize,
     )
   }
+
+  private readonly P = (2 + Math.sqrt(68)) / 4
 }
 
 export default HeaterEscutcheon

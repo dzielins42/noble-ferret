@@ -9,6 +9,8 @@ import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerF
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture';
 import { Saltire, Bend, Cross, Fess, Pale } from './model/Ordinary';
 import ColorTincture from './model/texture/ColorTincture';
+import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary';
+import LozengeType from './model/LozengeType';
 
 function App() {
   const black = "#000000"
@@ -27,10 +29,18 @@ function App() {
       //),
       new ColorTincture(red),
       //new ColorTincture(blue),
-    ),
+      false),
     [
-      new Saltire(
+      new Fess(
         new ColorTincture(blue),
+        [
+          //new Billet(new ColorTincture(yellow)),
+          //new Lozenge(new ColorTincture(yellow), LozengeType.Normal),
+          new Mullet(new ColorTincture(white), 5, true),
+          //new Lozenge(new ColorTincture(yellow), LozengeType.Mascle, 1.5),
+          //new Lozenge(new ColorTincture(yellow), LozengeType.Ruste),
+          //new Roundel(new ColorTincture(yellow)),
+        ],
       )
     ]
   )

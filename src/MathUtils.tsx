@@ -15,3 +15,9 @@ export const linearP = (p1: Point, p2: Point) => {
     return x * a + b
   }
 }
+
+export const slope = (f: (arg: number) => number) => {
+  const b = f(0)
+  const a = (f(1) - b) / 1
+  return Math.atan(a)
+}

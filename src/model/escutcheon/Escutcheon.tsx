@@ -89,6 +89,16 @@ abstract class Escutcheon {
       this.sinisterChief, this.dexterBase
     )
   }
+
+  get fessHeight(): number {
+    return this.bounds.height * this.T
+  }
+
+  get paleWidth(): number {
+    return this.bounds.width * this.T
+  }
+
+  private readonly T: number = 0.25
 }
 
 export default Escutcheon

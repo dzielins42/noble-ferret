@@ -21,7 +21,7 @@ class CrestPreview
     const dimen = Math.min(canvasWidth, canvasHeight) * 0.75
     const x = (canvasWidth - dimen) / 2
     const y = (canvasHeight - dimen) / 2
-    //let escutcheon = new RectangleEscutcheon(x, y, dimen, dimen)
+    //let escutcheon = new RectangleEscutcheon(x, y, dimen, dimen / 1.5)
     let escutcheon = new HeaterEscutcheon(x, y, dimen / 5)
     var renderer = new PlainCrestRenderer(canvasWidth, canvasHeight, escutcheon)
     return (
