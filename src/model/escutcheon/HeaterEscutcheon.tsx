@@ -1,8 +1,8 @@
+import ContextPathDrawer from "../../ContextPathDrawer";
 import Point from "../../geometry/Point";
 import Escutcheon from "./Escutcheon";
 
 class HeaterEscutcheon extends Escutcheon {
-
   constructor(
     private readonly x: number,
     private readonly y: number,
@@ -63,6 +63,10 @@ class HeaterEscutcheon extends Escutcheon {
   }
 
   private readonly P = (2 + Math.sqrt(68)) / 4
+
+  accept(visitor: ContextPathDrawer): void {
+    visitor.visitHeaterEscutcheon(this)
+  }
 }
 
 export default HeaterEscutcheon

@@ -22,27 +22,13 @@ function App() {
   const blue = "#bae1ff"
 
   var crest = new Crest(
-    new PerBendDividedField(
-      //new Ruste(
-      new ColorTincture(green),
-      //  new ColorTincture(orange),
-      //),
-      new ColorTincture(red),
-      //new ColorTincture(blue),
-      false),
-    [
-      new Fess(
-        new ColorTincture(blue),
-        [
-          //new Billet(new ColorTincture(yellow)),
-          //new Lozenge(new ColorTincture(yellow), LozengeType.Normal),
-          new Mullet(new ColorTincture(white), 5, true),
-          //new Lozenge(new ColorTincture(yellow), LozengeType.Mascle, 1.5),
-          //new Lozenge(new ColorTincture(yellow), LozengeType.Ruste),
-          //new Roundel(new ColorTincture(yellow)),
-        ],
-      )
-    ]
+    new SolidField(
+      new Chequy(
+        new ColorTincture(green),
+        new ColorTincture(blue)
+      ),
+    ),
+    []
   )
   return (
     <div className="App">

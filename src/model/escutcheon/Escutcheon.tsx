@@ -1,8 +1,10 @@
+import ContextPathDrawer from "../../ContextPathDrawer"
 import Point from "../../geometry/Point"
 import Rectangle from "../../geometry/Rectangle"
 import { linearP } from "../../MathUtils"
+import Visitable from "../../Visitable"
 
-abstract class Escutcheon {
+abstract class Escutcheon implements Visitable<ContextPathDrawer>{
 
   abstract get chief(): Point
   abstract get dexter(): Point
@@ -99,6 +101,8 @@ abstract class Escutcheon {
   }
 
   private readonly T: number = 0.25
+
+  abstract accept(visitor: ContextPathDrawer): void
 }
 
 export default Escutcheon

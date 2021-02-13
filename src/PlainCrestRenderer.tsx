@@ -19,6 +19,7 @@ import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary'
 import { Charge } from './model/Charge'
 import Point from './geometry/Point'
 import LozengeType from './model/LozengeType'
+import ContextPathDrawer from './ContextPathDrawer'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -46,10 +47,16 @@ class PlainCrestRenderer extends CrestRenderer {
     const h = this.escutcheon.base.y - this.escutcheon.chief.y
     this.value = (
       <Layer>
-        {this.renderSelf(crest.field)}
-        {crest.ordinaries.map((ordinary, index) => {
-          return this.renderSelf(ordinary)
-        })}
+        <Group
+          clipFunc={(ctx: Konva.Context) => {
+            const drawer = new ContextPathDrawer(ctx)
+            drawer.draw(this.escutcheon)
+          }}>
+          {this.renderSelf(crest.field)}
+          {crest.ordinaries.map((ordinary, index) => {
+            return this.renderSelf(ordinary)
+          })}
+        </Group>
         <Rect
           x={x}
           y={y}
@@ -66,13 +73,8 @@ class PlainCrestRenderer extends CrestRenderer {
         />
         <Shape
           sceneFunc={(context, shape) => {
-            context.beginPath();
-            context.moveTo(this.bounds.left, this.bounds.top);
-            context.lineTo(this.bounds.right, this.bounds.top);
-            context.lineTo(this.bounds.right, this.bounds.top + this.bounds.width / 3);
-            context.arc(this.bounds.left, this.bounds.top + this.bounds.width / 3, this.bounds.width, 0, 60 * Math.PI / 180, false)
-            context.arc(this.bounds.right, this.bounds.top + this.bounds.width / 3, this.bounds.width, 120 * Math.PI / 180, Math.PI, false)
-            context.closePath();
+            const drawer = new ContextPathDrawer(context)
+            drawer.draw(this.escutcheon)
             // (!) Konva specific method, it is very important
             context.fillStrokeShape(shape);
           }}

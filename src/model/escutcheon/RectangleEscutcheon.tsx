@@ -1,3 +1,4 @@
+import ContextPathDrawer from "../../ContextPathDrawer"
 import Point from "../../geometry/Point"
 import Escutcheon from "./Escutcheon"
 
@@ -31,6 +32,10 @@ class RectangleEscutcheon extends Escutcheon {
     return new Point(
       this.x + 0.5 * this.w, this.y + this.h
     )
+  }
+
+  accept(visitor: ContextPathDrawer): void {
+    visitor.visitRectangleEscutcheon(this)
   }
 }
 
