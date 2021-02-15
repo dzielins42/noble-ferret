@@ -7,11 +7,10 @@ import Crest from './model/Crest'
 import SolidField from './model/field/SolidField';
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField';
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture';
-import { Saltire, Bend, Cross, Fess, Pale } from './model/Ordinary';
+import { Saltire, Bend, Cross, Fess, Pale } from './model/ordinary/Ordinary';
 import ColorTincture from './model/texture/ColorTincture';
-import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary';
 import LozengeType from './model/LozengeType';
-import { EmptyCharge } from './model/Charge';
+import { Roundel } from './model/charge/MobileSubordinary';
 
 function App() {
   const black = "#000000"

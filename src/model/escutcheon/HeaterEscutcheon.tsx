@@ -1,5 +1,5 @@
-import ContextPathDrawer from "../../ContextPathDrawer";
 import Point from "../../geometry/Point";
+import { EscutcheonVisitor } from "../../util/Visitor";
 import Escutcheon from "./Escutcheon";
 
 class HeaterEscutcheon extends Escutcheon {
@@ -64,7 +64,7 @@ class HeaterEscutcheon extends Escutcheon {
 
   private readonly P = (2 + Math.sqrt(68)) / 4
 
-  accept(visitor: ContextPathDrawer): void {
+  accept(visitor: EscutcheonVisitor): void {
     visitor.visitHeaterEscutcheon(this)
   }
 }

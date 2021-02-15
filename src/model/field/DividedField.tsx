@@ -1,9 +1,9 @@
-import { CrestRenderer } from "../../CrestRenderer";
+import { FieldVisitor } from "../../util/Visitor";
 import Texture from "../texture/Texture";
 import Field from "./Field";
 
 abstract class DividedField implements Field {
-  abstract accept(visitor: CrestRenderer): void
+  abstract accept(visitor: FieldVisitor): void
 }
 
 abstract class TwoPartDividedField extends DividedField {
@@ -35,14 +35,14 @@ abstract class ThreePartDividedField extends DividedField {
 }
 
 export class PerFessDividedField extends TwoPartDividedField {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerFessDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerFessDividedField(this)
   }
 }
 
 export class PerPaleDividedField extends TwoPartDividedField {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerPaleDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerPaleDividedField(this)
   }
 }
 
@@ -58,20 +58,20 @@ export class PerBendDividedField extends TwoPartDividedField {
     this.sinister = sinister
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerBendDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerBendDividedField(this)
   }
 }
 
 export class PerSaltireDividedField extends TwoPartDividedField {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerSaltireDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerSaltireDividedField(this)
   }
 }
 
 export class PerCrossDividedField extends TwoPartDividedField {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerCrossDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerCrossDividedField(this)
   }
 }
 
@@ -87,8 +87,8 @@ export class PerChevronDividedField extends TwoPartDividedField {
     this.inverted = inverted
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerChevronDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerChevronDividedField(this)
   }
 }
 
@@ -105,7 +105,7 @@ export class PerPallDividedField extends ThreePartDividedField {
     this.inverted = inverted
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPerPallDividedField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitPerPallDividedField(this)
   }
 }

@@ -1,9 +1,9 @@
-import { CrestRenderer } from '../../CrestRenderer'
+import { TextureVisitor } from '../../util/Visitor'
 import Tincture from './Tincture'
 
 class FurTincture implements Tincture {
 
-  accept(visitor: CrestRenderer): void {
+  accept(visitor: TextureVisitor): void {
     throw new Error('Method not implemented.')
   }
 }

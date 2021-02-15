@@ -1,6 +1,5 @@
-import { CrestRenderer } from "../../CrestRenderer";
-import Visitable from "../../Visitable";
+import { TextureVisitor, Visitable } from "../../util/Visitor";
 
-interface Texture extends Visitable<CrestRenderer> { }
+interface Texture extends Visitable<TextureVisitor> { }
 
 export default Texture

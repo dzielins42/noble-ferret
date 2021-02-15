@@ -1,7 +1,6 @@
-import { CrestRenderer } from "../CrestRenderer";
-import Visitable from "../Visitable";
+import { ChargeVisitor, Visitable } from "../../util/Visitor";
 
-export interface Charge extends Visitable<CrestRenderer> { }
+export interface Charge extends Visitable<ChargeVisitor> { }
 
 export class PositionedCharge implements Charge {
   constructor(
@@ -9,7 +8,7 @@ export class PositionedCharge implements Charge {
     readonly position: ChargePosition
   ) { }
 
-  accept(visitor: CrestRenderer): void {
+  accept(visitor: ChargeVisitor): void {
     this.charge.accept(visitor)
   }
 }
@@ -23,7 +22,7 @@ export enum ChargePosition {
 }
 
 export class EmptyCharge {
-  accept(visitor: CrestRenderer): void {
+  accept(visitor: ChargeVisitor): void {
     // Do nothing
   }
 }

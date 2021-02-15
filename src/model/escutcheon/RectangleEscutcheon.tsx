@@ -1,5 +1,5 @@
-import ContextPathDrawer from "../../ContextPathDrawer"
 import Point from "../../geometry/Point"
+import { EscutcheonVisitor } from "../../util/Visitor"
 import Escutcheon from "./Escutcheon"
 
 class RectangleEscutcheon extends Escutcheon {
@@ -34,7 +34,7 @@ class RectangleEscutcheon extends Escutcheon {
     )
   }
 
-  accept(visitor: ContextPathDrawer): void {
+  accept(visitor: EscutcheonVisitor): void {
     visitor.visitRectangleEscutcheon(this)
   }
 }

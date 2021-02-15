@@ -1,9 +1,9 @@
-import { CrestRenderer } from "../../CrestRenderer";
+import { TextureVisitor } from "../../util/Visitor";
 import Texture from "./Texture";
 import Tincture from "./Tincture";
 
 abstract class VariationTexture implements Texture {
-  abstract accept(visitor: CrestRenderer): void
+  abstract accept(visitor: TextureVisitor): void
 }
 
 abstract class TwoPartVariationTexture extends VariationTexture {
@@ -34,14 +34,14 @@ abstract class ParameterizedTwoPartVariationTexture extends TwoPartVariationText
 }
 
 export class Barry extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderBarry(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitBarry(this)
   }
 }
 
 export class Paly extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderPaly(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitPaly(this)
   }
 }
 
@@ -58,32 +58,32 @@ export class Bendy extends ParameterizedTwoPartVariationTexture {
     this.sinister = sinister
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderBendy(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitBendy(this)
   }
 }
 
 
 export class Chequy extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderChequy(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitChequy(this)
   }
 }
 
 export class Lozengy extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderLozengy(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitLozengy(this)
   }
 }
 
 export class Fusilly extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderFusilly(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitFusilly(this)
   }
 }
 
 export class Ruste extends ParameterizedTwoPartVariationTexture {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderRuste(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitRuste(this)
   }
 }

@@ -1,4 +1,4 @@
-import { CrestRenderer } from '../../CrestRenderer'
+import { TextureVisitor } from '../../util/Visitor'
 import Tincture from './Tincture'
 
 class ColorTincture implements Tincture {
@@ -8,8 +8,8 @@ class ColorTincture implements Tincture {
     this.colorHex = colorHex
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderColorTincture(this)
+  accept(visitor: TextureVisitor): void {
+    visitor.visitColorTincture(this)
   }
 }
 

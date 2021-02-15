@@ -1,15 +1,14 @@
 import Konva from "konva";
 import HeaterEscutcheon from "./model/escutcheon/HeaterEscutcheon";
 import RectangleEscutcheon from "./model/escutcheon/RectangleEscutcheon";
-import Visitable from "./Visitable";
-
-class ContextPathDrawer {
+import { EscutcheonVisitor, Visitable } from "./util/Visitor";
+class ContextPathDrawer implements EscutcheonVisitor {
 
   constructor(
     readonly context: Konva.Context
   ) { }
 
-  draw(visitable: Visitable<ContextPathDrawer>): void {
+  draw(visitable: Visitable<EscutcheonVisitor>): void {
     visitable.accept(this)
   }
 

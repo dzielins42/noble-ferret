@@ -1,4 +1,4 @@
-import { CrestRenderer } from '../../CrestRenderer'
+import { TextureVisitor } from '../../util/Visitor'
 import Tincture from './Tincture'
 
 class MetalTincture implements Tincture {
@@ -8,7 +8,7 @@ class MetalTincture implements Tincture {
     this.colorHex = colorHex
   }
 
-  accept(visitor: CrestRenderer): void {
+  accept(visitor: TextureVisitor): void {
     throw new Error('Method not implemented.')
   }
 }

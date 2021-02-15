@@ -1,25 +1,25 @@
-import { CrestRenderer } from './CrestRenderer'
+import { CrestRenderer, Renderable } from './CrestRenderer'
 import Konva from 'konva'
 import { Shape, KonvaNodeComponent, Stage, Layer, Rect, Text, Circle, Line, Group, Star } from 'react-konva'
 import React from 'react'
 import ColorTincture from './model/texture/ColorTincture'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
-import Visitable from './Visitable'
 import Crest from './model/Crest'
 import { linear, linearP, slope } from './MathUtils'
 import BlankTexture from './model/texture/BlankTexture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
 import Tincture from './model/texture/Tincture'
-import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
+import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
 import Escutcheon from './model/escutcheon/Escutcheon'
 import RectangleEscutcheon from './model/escutcheon/RectangleEscutcheon'
 import Rectangle from './geometry/Rectangle'
-import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary'
-import { Charge } from './model/Charge'
+import { Billet, Lozenge, Mullet, Roundel } from './model/charge/MobileSubordinary'
+import { Charge } from './model/charge/Charge'
 import Point from './geometry/Point'
 import LozengeType from './model/LozengeType'
 import ContextPathDrawer from './ContextPathDrawer'
+import { ChargeVisitor, CrestVisitor, FieldVisitor, TextureVisitor, Visitable } from './util/Visitor'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -40,7 +40,7 @@ class PlainCrestRenderer extends CrestRenderer {
     this.bounds = this.escutcheon.bounds
   }
 
-  renderCrest(crest: Crest): void {
+  visitCrest(crest: Crest): void {
     const x = this.escutcheon.dexter.x
     const y = this.escutcheon.chief.y
     const w = this.escutcheon.sinister.x - this.escutcheon.dexter.x
@@ -87,7 +87,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   // Field
-  renderSolidField(solidField: SolidField): void {
+  visitSolidField(solidField: SolidField): void {
     this.value = (
       <Group>
         {this.renderSelf(solidField.texture)}
@@ -95,7 +95,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerFessDividedField(field: PerFessDividedField): void {
+  visitPerFessDividedField(field: PerFessDividedField): void {
     const fessPoint = this.escutcheon.fessPoint
     const bounds = this.escutcheon.bounds
     this.value = (
@@ -120,7 +120,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerPaleDividedField(field: PerPaleDividedField): void {
+  visitPerPaleDividedField(field: PerPaleDividedField): void {
     const bounds = this.escutcheon.bounds
     this.value = (
       <Group>
@@ -144,7 +144,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerBendDividedField(field: PerBendDividedField): void {
+  visitPerBendDividedField(field: PerBendDividedField): void {
     const bounds = this.bounds
     const startPoint = field.sinister ? this.escutcheon.sinisterChief : this.escutcheon.dexterChief
     const endPoint = field.sinister ? this.escutcheon.dexterBase : this.escutcheon.sinisterBase
@@ -183,7 +183,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerSaltireDividedField(field: PerSaltireDividedField): void {
+  visitPerSaltireDividedField(field: PerSaltireDividedField): void {
     const bounds = this.escutcheon.bounds
     const fun1 = linearP(
       this.escutcheon.dexterChief,
@@ -226,7 +226,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerCrossDividedField(field: PerCrossDividedField): void {
+  visitPerCrossDividedField(field: PerCrossDividedField): void {
     const bounds = this.escutcheon.bounds
     const fessPoint = this.escutcheon.fessPoint
     const x = fessPoint.x
@@ -257,7 +257,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerChevronDividedField(field: PerChevronDividedField): void {
+  visitPerChevronDividedField(field: PerChevronDividedField): void {
     const bounds = this.escutcheon.bounds
     const fessPoint = this.escutcheon.fessPoint
     const fun1 =
@@ -297,7 +297,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPerPallDividedField(field: PerPallDividedField): void {
+  visitPerPallDividedField(field: PerPallDividedField): void {
     const perPale = new PerPaleDividedField(
       field.texture2,
       field.texture3
@@ -316,7 +316,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   // Variation
-  renderBarry(barry: Barry): void {
+  visitBarry(barry: Barry): void {
     const h = this.bounds.height / (barry.count * 2)
     const w = this.bounds.width
     this.value = (
@@ -338,7 +338,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderPaly(paly: Paly): void {
+  visitPaly(paly: Paly): void {
     const w = this.bounds.width / (paly.count * 2)
     const h = this.bounds.height
     this.value = (
@@ -360,7 +360,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderBendy(bendy: Bendy): void {
+  visitBendy(bendy: Bendy): void {
     const w = this.bounds.width
     const h = this.bounds.height
     const dimen = Math.SQRT2 * (w + h) / 2
@@ -385,7 +385,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderChequy(chequy: Chequy): void {
+  visitChequy(chequy: Chequy): void {
     const w = this.bounds.width
     const h = this.bounds.height
     const d = Math.min(w, h) / (chequy.count * 2)
@@ -419,21 +419,21 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderLozengy(lozengy: Lozengy): void {
+  visitLozengy(lozengy: Lozengy): void {
     this.value = this.innerRenderLozengy(
       lozengy.tincture1, lozengy.tincture2,
       lozengy.count, 1
     )
   }
 
-  renderFusilly(fusilly: Fusilly): void {
+  visitFusilly(fusilly: Fusilly): void {
     this.value = this.innerRenderLozengy(
       fusilly.tincture1, fusilly.tincture2,
       fusilly.count, 1.5
     )
   }
 
-  renderRuste(ruste: Ruste): void {
+  visitRuste(ruste: Ruste): void {
     this.value = this.innerRenderLozengy(
       ruste.tincture1, ruste.tincture2,
       ruste.count, 1.5, LozengeType.Ruste
@@ -508,7 +508,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   // Ordinary
-  renderPale(pale: Pale): void {
+  visitPale(pale: Pale): void {
     const chargesCount = this.assertChargesCount(
       pale.charges, 5
     )
@@ -551,7 +551,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderFess(fess: Fess): void {
+  visitFess(fess: Fess): void {
     const chargesCount = this.assertChargesCount(
       fess.charges, 5
     )
@@ -594,7 +594,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderCross(cross: Cross): void {
+  visitCross(cross: Cross): void {
     const chargesCount = this.assertChargesCount(
       cross.charges, 5
     )
@@ -638,7 +638,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderBend(bend: Bend): void {
+  visitBend(bend: Bend): void {
     const chargesCount = this.assertChargesCount(
       bend.charges, 5
     )
@@ -703,7 +703,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderSaltire(saltire: Saltire): void {
+  visitSaltire(saltire: Saltire): void {
     const bounds = this.bounds
     const escutcheon = this.escutcheon
     const fessPoint = escutcheon.fessPoint
@@ -977,7 +977,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   // Mobile Subordinary
-  renderRoundel(roundel: Roundel): void {
+  visitRoundel(roundel: Roundel): void {
     const w = this.viewportWidth
     const h = this.viewportHeight
     const dimen = Math.min(w, h)
@@ -997,7 +997,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderBillet(billet: Billet): void {
+  visitBillet(billet: Billet): void {
     const w = this.viewportWidth
     const h = this.viewportHeight
     const dimen = Math.min(w, h)
@@ -1017,7 +1017,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderLozenge(lozenge: Lozenge): void {
+  visitLozenge(lozenge: Lozenge): void {
     const w = this.viewportWidth
     const h = this.viewportHeight
     const dimen = Math.min(w, h) / 2
@@ -1050,7 +1050,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderMullet(mullet: Mullet): void {
+  visitMullet(mullet: Mullet): void {
     const w = this.viewportWidth
     const h = this.viewportHeight
     const dimen = Math.min(w, h) / 2
@@ -1082,7 +1082,7 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  renderColorTincture(colorTincture: ColorTincture): void {
+  visitColorTincture(colorTincture: ColorTincture): void {
     const bounds = this.escutcheon.bounds
     const x = bounds.left
     const y = bounds.top
@@ -1117,7 +1117,7 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   private renderSelf(
-    visitable: Visitable<CrestRenderer>,
+    visitable: Visitable<Renderable>,
     width: number = this.viewportWidth,
     height: number = this.viewportHeight,
     escutcheon: Escutcheon = this.escutcheon

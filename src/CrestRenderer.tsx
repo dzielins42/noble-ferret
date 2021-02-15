@@ -1,13 +1,14 @@
 import Crest from './model/Crest'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
-import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary'
-import { Bend, Cross, Fess, Pale, Saltire } from './model/Ordinary'
+import { Billet, Lozenge, Mullet, Roundel } from './model/charge/MobileSubordinary'
+import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
 import ColorTincture from './model/texture/ColorTincture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
-import Visitable from './Visitable'
+import { ChargeVisitor, CrestVisitor, FieldVisitor, OrdinaryVisitor, TextureVisitor, Visitable } from './util/Visitor'
 
-export abstract class CrestRenderer {
+export abstract class CrestRenderer
+  implements CrestVisitor, FieldVisitor, TextureVisitor, ChargeVisitor, OrdinaryVisitor {
 
   protected readonly viewportWidth: number
   protected readonly viewportHeight: number
@@ -19,40 +20,43 @@ export abstract class CrestRenderer {
 
   protected value: React.ReactNode = null
 
-  render(visitable: Visitable<CrestRenderer>): React.ReactNode {
+  render(
+    visitable: Visitable<Renderable>)
+    : React.ReactNode {
     visitable.accept(this)
     return this.value
   }
 
-  abstract renderCrest(crest: Crest): void
-  // Field
-  abstract renderSolidField(solidField: SolidField): void
-  abstract renderPerFessDividedField(field: PerFessDividedField): void
-  abstract renderPerPaleDividedField(field: PerPaleDividedField): void
-  abstract renderPerBendDividedField(field: PerBendDividedField): void
-  abstract renderPerSaltireDividedField(field: PerSaltireDividedField): void
-  abstract renderPerCrossDividedField(field: PerCrossDividedField): void
-  abstract renderPerChevronDividedField(field: PerChevronDividedField): void
-  abstract renderPerPallDividedField(field: PerPallDividedField): void
-  // Variation
-  abstract renderBarry(barry: Barry): void
-  abstract renderPaly(paly: Paly): void
-  abstract renderBendy(bendy: Bendy): void
-  abstract renderChequy(chequy: Chequy): void
-  abstract renderLozengy(lozengy: Lozengy): void
-  abstract renderFusilly(fusilly: Fusilly): void
-  abstract renderRuste(ruste: Ruste): void
-  // Ordinary
-  abstract renderPale(pale: Pale): void
-  abstract renderFess(fess: Fess): void
-  abstract renderCross(cross: Cross): void
-  abstract renderBend(bend: Bend): void
-  abstract renderSaltire(saltire: Saltire): void
-  // Mobile Subordinary
-  abstract renderRoundel(roundel: Roundel): void
-  abstract renderBillet(billet: Billet): void
-  abstract renderLozenge(lozenge: Lozenge): void
-  abstract renderMullet(mullet: Mullet): void
+  abstract visitCrest(crest: Crest): void
 
-  abstract renderColorTincture(colorTincture: ColorTincture): void
+  abstract visitSolidField(field: SolidField): void
+  abstract visitPerFessDividedField(field: PerFessDividedField): void
+  abstract visitPerPaleDividedField(field: PerPaleDividedField): void
+  abstract visitPerBendDividedField(field: PerBendDividedField): void
+  abstract visitPerSaltireDividedField(field: PerSaltireDividedField): void
+  abstract visitPerCrossDividedField(field: PerCrossDividedField): void
+  abstract visitPerChevronDividedField(field: PerChevronDividedField): void
+  abstract visitPerPallDividedField(field: PerPallDividedField): void
+
+  abstract visitColorTincture(texture: ColorTincture): void
+  abstract visitBarry(barry: Barry): void
+  abstract visitPaly(paly: Paly): void
+  abstract visitBendy(bendy: Bendy): void
+  abstract visitChequy(chequy: Chequy): void
+  abstract visitLozengy(lozengy: Lozengy): void
+  abstract visitFusilly(fusilly: Fusilly): void
+  abstract visitRuste(ruste: Ruste): void
+
+  abstract visitRoundel(roundel: Roundel): void
+  abstract visitBillet(billet: Billet): void
+  abstract visitLozenge(lozenge: Lozenge): void
+  abstract visitMullet(mullet: Mullet): void
+
+  abstract visitPale(pale: Pale): void
+  abstract visitFess(fess: Fess): void
+  abstract visitCross(cross: Cross): void
+  abstract visitBend(bend: Bend): void
+  abstract visitSaltire(saltire: Saltire): void
 }
+
+export type Renderable = CrestVisitor | FieldVisitor | TextureVisitor | ChargeVisitor | OrdinaryVisitor

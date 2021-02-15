@@ -1,8 +1,8 @@
-import { CrestRenderer } from "../../CrestRenderer";
+import { TextureVisitor } from "../../util/Visitor";
 import Texture from "./Texture";
 
 class BlankTexture implements Texture {
-  accept(visitor: CrestRenderer): void {
+  accept(visitor: TextureVisitor): void {
     // Do nothing
   }
 }

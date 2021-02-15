@@ -1,4 +1,4 @@
-import { CrestRenderer } from '../../CrestRenderer'
+import { FieldVisitor } from '../../util/Visitor'
 import Texture from '../texture/Texture'
 import Field from './Field'
 
@@ -9,8 +9,8 @@ class SolidField implements Field {
     this.texture = texture
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderSolidField(this)
+  accept(visitor: FieldVisitor): void {
+    visitor.visitSolidField(this)
   }
 }
 

@@ -1,25 +1,25 @@
-import { CrestRenderer } from "../CrestRenderer";
+import { ChargeVisitor } from "../../util/Visitor";
+import LozengeType from "../LozengeType";
+import Tincture from "../texture/Tincture";
 import { Charge } from "./Charge";
-import LozengeType from "./LozengeType";
-import Tincture from "./texture/Tincture";
 
 abstract class MobileSubordinary implements Charge {
   constructor(
     readonly tincture: Tincture
   ) { }
 
-  abstract accept(visitor: CrestRenderer): void
+  abstract accept(visitor: ChargeVisitor): void
 }
 
 export class Roundel extends MobileSubordinary {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderRoundel(this)
+  accept(visitor: ChargeVisitor): void {
+    visitor.visitRoundel(this)
   }
 }
 
 export class Billet extends MobileSubordinary {
-  accept(visitor: CrestRenderer): void {
-    visitor.renderBillet(this)
+  accept(visitor: ChargeVisitor): void {
+    visitor.visitBillet(this)
   }
 }
 
@@ -32,8 +32,8 @@ export class Lozenge extends MobileSubordinary {
     super(tincture)
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderLozenge(this)
+  accept(visitor: ChargeVisitor): void {
+    visitor.visitLozenge(this)
   }
 }
 
@@ -46,7 +46,7 @@ export class Mullet extends MobileSubordinary {
     super(tincture)
   }
 
-  accept(visitor: CrestRenderer): void {
-    visitor.renderMullet(this)
+  accept(visitor: ChargeVisitor): void {
+    visitor.visitMullet(this)
   }
 }
