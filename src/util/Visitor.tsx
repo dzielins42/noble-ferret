@@ -7,6 +7,7 @@ import { Billet, Lozenge, Mullet, Roundel } from "../model/charge/MobileSubordin
 import { Bend, Cross, Fess, Pale, Saltire } from "../model/ordinary/Ordinary";
 import ColorTincture from "../model/texture/ColorTincture";
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture";
+import { InBend, InFess, InPale } from "../model/charge/GroupCharge";
 
 /*export interface Visitor extends
   CrestVisitor, ChargeVisitor, FieldVisitor, EscutcheonVisitor, TextureVisitor, OrdinaryVisitor {
@@ -47,6 +48,10 @@ export interface ChargeVisitor {
   visitBillet(billet: Billet): void
   visitLozenge(lozenge: Lozenge): void
   visitMullet(mullet: Mullet): void
+  // Group
+  visitInFess(inFess: InFess): void
+  visitInPale(inPale: InPale): void
+  visitInBend(inBend: InBend): void
 }
 
 export interface TextureVisitor {

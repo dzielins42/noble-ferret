@@ -6,6 +6,7 @@ import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
 import ColorTincture from './model/texture/ColorTincture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
 import { ChargeVisitor, CrestVisitor, FieldVisitor, OrdinaryVisitor, TextureVisitor, Visitable } from './util/Visitor'
+import { InBend, InFess, InPale } from './model/charge/GroupCharge'
 
 export abstract class CrestRenderer
   implements CrestVisitor, FieldVisitor, TextureVisitor, ChargeVisitor, OrdinaryVisitor {
@@ -51,6 +52,9 @@ export abstract class CrestRenderer
   abstract visitBillet(billet: Billet): void
   abstract visitLozenge(lozenge: Lozenge): void
   abstract visitMullet(mullet: Mullet): void
+  abstract visitInFess(inFess: InFess): void
+  abstract visitInPale(inPale: InPale): void
+  abstract visitInBend(inBend: InBend): void
 
   abstract visitPale(pale: Pale): void
   abstract visitFess(fess: Fess): void

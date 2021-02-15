@@ -11,6 +11,7 @@ import { Saltire, Bend, Cross, Fess, Pale } from './model/ordinary/Ordinary';
 import ColorTincture from './model/texture/ColorTincture';
 import LozengeType from './model/LozengeType';
 import { Roundel } from './model/charge/MobileSubordinary';
+import { InBend, InFess, InPale } from './model/charge/GroupCharge';
 
 function App() {
   const black = "#000000"
@@ -32,7 +33,11 @@ function App() {
       new Saltire(
         new ColorTincture(red),
         [
-          new Roundel(new ColorTincture(yellow)),
+          new InBend([
+            new Roundel(new ColorTincture(black)),
+            new Roundel(new ColorTincture(black)),
+            new Roundel(new ColorTincture(black))
+          ]),
           new Roundel(new ColorTincture(yellow)),
           new Roundel(new ColorTincture(yellow)),
           new Roundel(new ColorTincture(yellow)),

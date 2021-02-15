@@ -20,6 +20,7 @@ import Point from './geometry/Point'
 import LozengeType from './model/LozengeType'
 import ContextPathDrawer from './ContextPathDrawer'
 import { ChargeVisitor, CrestVisitor, FieldVisitor, TextureVisitor, Visitable } from './util/Visitor'
+import { InBend, InFess, InPale } from './model/charge/GroupCharge'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -974,6 +975,64 @@ class PlainCrestRenderer extends CrestRenderer {
         </Group >
       )
     })
+  }
+
+  visitInFess(inFess: InFess): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h)
+    const rect = new Rectangle(
+      (h - dimen) / 2, (w - dimen) / 2,
+      (h + dimen) / 2, (w + dimen) / 2
+    )
+    const chargeSize = (w * this.CONTENT_TO_SPACE_RATIO) / inFess.charges.length
+
+    this.value = this.renderInFess(
+      inFess.charges,
+      chargeSize,
+      rect,
+      false,
+      false
+    )
+  }
+
+  visitInPale(inPale: InPale): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h)
+    const rect = new Rectangle(
+      (h - dimen) / 2, (w - dimen) / 2,
+      (h + dimen) / 2, (w + dimen) / 2
+    )
+    const chargeSize = (h * this.CONTENT_TO_SPACE_RATIO) / inPale.charges.length
+
+    this.value = this.renderInPale(
+      inPale.charges,
+      chargeSize,
+      rect,
+      false,
+      false
+    )
+  }
+
+  visitInBend(inBend: InBend): void {
+    const w = this.viewportWidth
+    const h = this.viewportHeight
+    const dimen = Math.min(w, h)
+    const rect = new Rectangle(
+      (h - dimen) / 2, (w - dimen) / 2,
+      (h + dimen) / 2, (w + dimen) / 2
+    )
+    const chargeSize = (rect.diagonal * this.CONTENT_TO_SPACE_RATIO) / inBend.charges.length
+
+    this.value = this.renderInBend(
+      inBend.charges,
+      chargeSize,
+      rect,
+      inBend.sinister,
+      false,
+      false
+    )
   }
 
   // Mobile Subordinary
