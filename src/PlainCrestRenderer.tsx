@@ -389,24 +389,24 @@ class PlainCrestRenderer extends CrestRenderer {
     const w = this.bounds.width
     const h = this.bounds.height
     const d = Math.min(w, h) / (chequy.count * 2)
-    const hCount = Math.ceil(w / d / 2)
-    const vCount = Math.ceil(h / d / 2)
+    const rowCount = Math.ceil(h / d / 2)
+    const colCount = Math.ceil(w / d / 2)
     this.value = (
       <Group>
         {this.renderSelf(chequy.tincture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            for (let row = 0; row < vCount; row++) {
-              for (let col = 0; col < hCount; col++) {
+            for (let row = 0; row < rowCount; row++) {
+              for (let col = 0; col < colCount; col++) {
                 ctx.rect(
-                  this.bounds.left + row * 2 * d,
-                  this.bounds.top + col * 2 * d,
+                  this.bounds.left + col * 2 * d,
+                  this.bounds.top + row * 2 * d,
                   d,
                   d
                 )
                 ctx.rect(
-                  this.bounds.left + (row * 2 + 1) * d,
-                  this.bounds.top + (col * 2 + 1) * d,
+                  this.bounds.left + (col * 2 + 1) * d,
+                  this.bounds.top + (row * 2 + 1) * d,
                   d,
                   d
                 )
