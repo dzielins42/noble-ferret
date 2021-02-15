@@ -21,3 +21,9 @@ export enum ChargePosition {
   MIDDLE_CHIEF, MIDDLE_BASE,
   FESS_POINT, HONOUR_POINT, NOMBRIL_POINT
 }
+
+export class EmptyCharge {
+  accept(visitor: CrestRenderer): void {
+    // Do nothing
+  }
+}

@@ -524,21 +524,19 @@ class PlainCrestRenderer extends CrestRenderer {
       w * this.CONTENT_TO_SPACE_RATIO,
       (totalHeight * this.CONTENT_TO_SPACE_RATIO) / chargesCount
     )
-    const spacerHeight = (totalHeight - chargeHeight * chargesCount) / (chargesCount + 1)
 
-    const charges = []
-
-    for (let i = 0; i < chargesCount; i++) {
-      const x = bounds.centerHorizontal - chargeHeight / 2
-      const y = escutcheon.middleChief.y + spacerHeight + i * (chargeHeight + spacerHeight)
-      charges.push(
-        <Group
-          x={x}
-          y={y}>
-          {this.renderSelf(pale.charges[i], chargeHeight, chargeHeight)}
-        </Group>
-      )
-    }
+    const charges = this.renderInPale(
+      pale.charges,
+      chargeHeight,
+      new Rectangle(
+        escutcheon.middleChief.y,
+        escutcheon.fessPoint.x - totalHeight / 2,
+        escutcheon.middleBase.y,
+        escutcheon.fessPoint.x + totalHeight / 2,
+      ),
+      true,
+      true
+    )
 
     this.value = (
       <Group
@@ -569,22 +567,19 @@ class PlainCrestRenderer extends CrestRenderer {
       h * this.CONTENT_TO_SPACE_RATIO,
       (totalWidth * this.CONTENT_TO_SPACE_RATIO) / chargesCount
     )
-    const spacerWidth = (totalWidth - chargeWidth * chargesCount) / (chargesCount + 1)
 
-    const charges = []
-
-    for (let i = 0; i < chargesCount; i++) {
-      const x = escutcheon.dexter.x + spacerWidth + i * (chargeWidth + spacerWidth)
-      const y = escutcheon.fessPoint.y - chargeWidth / 2
-
-      charges.push(
-        <Group
-          x={x}
-          y={y}>
-          {this.renderSelf(fess.charges[i], chargeWidth, chargeWidth)}
-        </Group>
-      )
-    }
+    const charges = this.renderInFess(
+      fess.charges,
+      chargeWidth,
+      new Rectangle(
+        escutcheon.fessPoint.y - totalWidth / 2,
+        escutcheon.dexter.x,
+        escutcheon.fessPoint.y + totalWidth / 2,
+        escutcheon.sinister.x
+      ),
+      true,
+      true
+    )
 
     this.value = (
       <Group
@@ -611,42 +606,14 @@ class PlainCrestRenderer extends CrestRenderer {
       escutcheon.fessHeight, escutcheon.paleWidth
     )
     const halfDimen = dimen / 2
-
     const chargeDimen = dimen * this.CONTENT_TO_SPACE_RATIO
 
-    let chargePoints: Point[] = []
-    const central = fessPoint
-    const dexter = Point.between(
-      fessPoint, new Point(escutcheon.dexter.x - chargeDimen / 2, fessPoint.y)
+    const charges = this.renderInCross(
+      cross.charges,
+      chargeDimen,
+      bounds,
+      fessPoint
     )
-    const sinister = Point.between(
-      fessPoint, new Point(escutcheon.sinister.x + chargeDimen / 2, fessPoint.y)
-    )
-    const chief = Point.between(
-      fessPoint, new Point(fessPoint.x, escutcheon.chief.y - chargeDimen / 2)
-    )
-    const base = Point.between(
-      fessPoint, new Point(fessPoint.x, escutcheon.base.y + chargeDimen / 2)
-    )
-
-    if (chargesCount === 1) {
-      chargePoints = [central]
-    } else if (chargesCount === 2) {
-      chargePoints = [dexter, sinister]
-    } else if (chargesCount === 3) {
-      chargePoints = [dexter, sinister, chief]
-    } else if (chargesCount === 4) {
-      chargePoints = [dexter, sinister, chief, base]
-    } else if (chargesCount === 5) {
-      chargePoints = [central, dexter, sinister, chief, base]
-    }
-    const charges = chargePoints.map((point, index) => {
-      return < Group
-        x={point.x - chargeDimen / 2}
-        y={point.y - chargeDimen / 2} >
-        {this.renderSelf(cross.charges[index], chargeDimen, chargeDimen)}
-      </Group >
-    })
 
     this.value = (
       <Group
@@ -693,43 +660,28 @@ class PlainCrestRenderer extends CrestRenderer {
     // Initial line calculations
     let startPoint = bend.sinister ? escutcheon.dexterBase : escutcheon.dexterChief
     let endPoint = bend.sinister ? escutcheon.sinisterChief : escutcheon.sinisterBase
-    let totalSpace = startPoint.distance(endPoint)
-    const dX = (endPoint.x - startPoint.x) / totalSpace
-    const dY = (endPoint.y - startPoint.y) / totalSpace
-    // Adding padding
-    const fess2Start = fessPoint.distance(startPoint)
-    const fess2End = fessPoint.distance(endPoint)
-    const padding = Math.min(fess2Start, fess2End)
-    startPoint = new Point(
-      fessPoint.x - padding * dX,
-      fessPoint.y - padding * dY
+    const hor = Math.min(
+      Math.abs(fessPoint.x - startPoint.x),
+      Math.abs(fessPoint.x - endPoint.x)
     )
-    endPoint = new Point(
-      fessPoint.x + padding * dX,
-      fessPoint.y + padding * dY
+    const vert = Math.min(
+      Math.abs(fessPoint.y - startPoint.y),
+      Math.abs(fessPoint.y - endPoint.y)
     )
-    totalSpace = startPoint.distance(endPoint)
 
-    const halfSqrt2 = Math.SQRT2 / 2
-
+    const chargesRect = new Rectangle(fessPoint.y - vert, fessPoint.x - hor, fessPoint.y + vert, fessPoint.x + hor)
     const chargeSize = Math.min(
       t * this.CONTENT_TO_SPACE_RATIO,
-      (totalSpace * this.CONTENT_TO_SPACE_RATIO) / chargesCount
+      (chargesRect.diagonal * this.CONTENT_TO_SPACE_RATIO) / chargesCount
     )
-    const spacerSize = (totalSpace - (chargeSize * chargesCount)) / (chargesCount + 1)
-    const charges = []
-    for (let i = 0; i < chargesCount; i++) {
-      const d = i * (spacerSize + chargeSize) + spacerSize + chargeSize / 2
-      const x = startPoint.x + d * dX - (chargeSize * halfSqrt2 / 2)
-      const y = startPoint.y + d * dY - (chargeSize * halfSqrt2 / 2)
-      charges.push(
-        <Group
-          x={x}
-          y={y}>
-          {this.renderSelf(bend.charges[i], chargeSize * halfSqrt2, chargeSize * halfSqrt2)}
-        </Group>
-      )
-    }
+    const charges = this.renderInBend(
+      bend.charges,
+      chargeSize * Math.SQRT2 / 2,
+      chargesRect,
+      bend.sinister,
+      true,
+      true,
+    )
 
     this.value = (
       <Group>
@@ -768,38 +720,26 @@ class PlainCrestRenderer extends CrestRenderer {
       saltire.charges, 5
     )
     const chargeSize = 0.5 * Math.SQRT2 * t * this.CONTENT_TO_SPACE_RATIO
-    let chargePoints: Point[] = []
-    const central = fessPoint
-    const dexterChief = Point.between(
-      fessPoint, escutcheon.dexterChief
+
+    const hor = Math.min(
+      fessPoint.distanceX(escutcheon.dexterChief),
+      fessPoint.distanceX(escutcheon.dexterBase),
+      fessPoint.distanceX(escutcheon.sinisterChief),
+      fessPoint.distanceX(escutcheon.sinisterBase),
     )
-    const sinisterChief = Point.between(
-      fessPoint, escutcheon.sinisterChief
+    const vert = Math.min(
+      fessPoint.distanceY(escutcheon.dexterChief),
+      fessPoint.distanceY(escutcheon.dexterBase),
+      fessPoint.distanceY(escutcheon.sinisterChief),
+      fessPoint.distanceY(escutcheon.sinisterBase),
     )
-    const dexterBase = Point.between(
-      fessPoint, escutcheon.dexterBase
+    const charges = this.renderInSaltire(
+      saltire.charges,
+      chargeSize,
+      new Rectangle(
+        fessPoint.y - vert, fessPoint.x - hor, fessPoint.y + vert, fessPoint.x + hor
+      )
     )
-    const sinisterBase = Point.between(
-      fessPoint, escutcheon.sinisterBase
-    )
-    if (chargesCount === 1) {
-      chargePoints = [central]
-    } else if (chargesCount === 2) {
-      chargePoints = [dexterChief, sinisterChief]
-    } else if (chargesCount === 3) {
-      chargePoints = [central, dexterChief, sinisterChief]
-    } else if (chargesCount === 4) {
-      chargePoints = [dexterChief, sinisterChief, dexterBase, sinisterBase]
-    } else if (chargesCount === 5) {
-      chargePoints = [central, dexterChief, sinisterChief, dexterBase, sinisterBase]
-    }
-    const charges = chargePoints.map((point, index) => {
-      return < Group
-        x={point.x - chargeSize / 2}
-        y={point.y - chargeSize / 2} >
-        {this.renderSelf(saltire.charges[index], chargeSize, chargeSize)}
-      </Group >
-    })
 
     this.value = (
       <Group>
@@ -826,6 +766,214 @@ class PlainCrestRenderer extends CrestRenderer {
         {charges}
       </Group>
     )
+  }
+
+  // Charge group
+  private renderInPale(
+    charges: Charge[],
+    chargeSize: number,
+    rect: Rectangle,
+    startPadding: boolean,
+    endPadding: boolean
+  ) {
+    const chargesCount = charges.length
+    const height = rect.height
+    if (height / chargesCount < chargeSize) {
+      console.error("Cannot render " + chargesCount + " charges of size " + chargeSize + " on " + height + " pale")
+      return
+    }
+    let spacersCount = chargesCount - 1
+    if (startPadding) {
+      spacersCount++
+    }
+    if (endPadding) {
+      spacersCount++
+    }
+    const spacerHeight = (height - chargeSize * chargesCount) / spacersCount
+
+    const result = []
+    for (let i = 0; i < chargesCount; i++) {
+      const x = rect.centerHorizontal - chargeSize / 2//rect.left + (startPadding ? spacerWidth : 0) + chargeSize / 2 + i * (spacerWidth + chargeSize) - chargeSize / 2
+      const y = rect.top + + (startPadding ? spacerHeight : 0) + chargeSize / 2 + i * (spacerHeight + chargeSize) - chargeSize / 2
+      result.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(charges[i], chargeSize, chargeSize)}
+        </Group>
+      )
+    }
+
+    return result
+  }
+
+  private renderInFess(
+    charges: Charge[],
+    chargeSize: number,
+    rect: Rectangle,
+    startPadding: boolean,
+    endPadding: boolean
+  ) {
+    const chargesCount = charges.length
+    const width = rect.width
+    if (width / chargesCount < chargeSize) {
+      console.error("Cannot render " + chargesCount + " charges of size " + chargeSize + " on " + width + " fess")
+      return
+    }
+    let spacersCount = chargesCount - 1
+    if (startPadding) {
+      spacersCount++
+    }
+    if (endPadding) {
+      spacersCount++
+    }
+    const spacerWidth = (width - chargeSize * chargesCount) / spacersCount
+
+    const result = []
+    for (let i = 0; i < chargesCount; i++) {
+      const x = rect.left + (startPadding ? spacerWidth : 0) + chargeSize / 2 + i * (spacerWidth + chargeSize) - chargeSize / 2
+      const y = rect.centerVertical - chargeSize / 2
+      result.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(charges[i], chargeSize, chargeSize)}
+        </Group>
+      )
+    }
+
+    return result
+  }
+
+  private renderInCross(
+    charges: Charge[],
+    chargeSize: number,
+    rect: Rectangle,
+    center: Point
+  ) {
+    const chargesCount = charges.length
+    const dexter = new Point(
+      (center.x + rect.left) / 2, center.y
+    )
+    const sinister = new Point(
+      (center.x + rect.right) / 2, center.y
+    )
+    const chief = new Point(
+      center.x, (center.y + rect.top) / 2
+    )
+    const base = new Point(
+      center.x, (center.y + rect.bottom) / 2
+    )
+
+    let points: Point[] = []
+    if (chargesCount === 1) {
+      points = [center]
+    } else if (chargesCount === 2) {
+      points = [dexter, sinister]
+    } else if (chargesCount === 3) {
+      points = [dexter, sinister, chief]
+    } else if (chargesCount === 4) {
+      points = [dexter, sinister, chief, base]
+    } else if (chargesCount === 5) {
+      points = [center, dexter, sinister, chief, base]
+    }
+
+    return points.map((point, index) => {
+      return (
+        < Group
+          x={point.x - chargeSize / 2}
+          y={point.y - chargeSize / 2} >
+          {this.renderSelf(charges[index], chargeSize, chargeSize)}
+        </Group >
+      )
+    })
+  }
+
+  private renderInBend(
+    charges: Charge[],
+    chargeSize: number,
+    rect: Rectangle,
+    sinister: boolean,
+    startPadding: boolean,
+    endPadding: boolean
+  ) {
+    const chargesCount = charges.length
+    const diagonal = rect.diagonal
+    const chargeDiagonal = chargeSize * Math.SQRT2
+    if (diagonal / chargesCount < chargeDiagonal) {
+      console.error("Cannot render " + chargesCount + " charges of size " + chargeSize + " on " + diagonal + " bend")
+      return
+    }
+    const dX = (rect.right - rect.left) / diagonal
+    const dY = (sinister ? -1 : 1) * (rect.bottom - rect.top) / diagonal
+    let spacersCount = chargesCount - 1
+    if (startPadding) {
+      spacersCount++
+    }
+    if (endPadding) {
+      spacersCount++
+    }
+    const spacerDiagonal = (diagonal - (chargeDiagonal * chargesCount)) / spacersCount
+
+    const result = []
+    for (let i = 0; i < chargesCount; i++) {
+      const d = i * (spacerDiagonal + chargeDiagonal) + (startPadding ? spacerDiagonal : 0) + chargeDiagonal / 2
+      const x = rect.left + d * dX - chargeSize / 2
+      const y = (sinister ? rect.bottom : rect.top) + d * dY - chargeSize / 2
+      result.push(
+        <Group
+          x={x}
+          y={y}>
+          {this.renderSelf(charges[i], chargeSize, chargeSize)}
+        </Group>
+      )
+    }
+
+    return result
+  }
+
+  private renderInSaltire(
+    charges: Charge[],
+    chargeSize: number,
+    rect: Rectangle
+  ) {
+    const chargesCount = charges.length
+    const center = rect.center
+    const dexterChief = new Point(
+      (center.x + rect.left) / 2, (center.y + rect.top) / 2
+    )
+    const dexterBase = new Point(
+      (center.x + rect.left) / 2, (center.y + rect.bottom) / 2
+    )
+    const sinisterChief = new Point(
+      (center.x + rect.right) / 2, (center.y + rect.top) / 2
+    )
+    const sinisterBase = new Point(
+      (center.x + rect.right) / 2, (center.y + rect.bottom) / 2
+    )
+
+    let points: Point[] = []
+    if (chargesCount === 1) {
+      points = [center]
+    } else if (chargesCount === 2) {
+      points = [dexterChief, sinisterChief]
+    } else if (chargesCount === 3) {
+      points = [center, dexterChief, sinisterChief]
+    } else if (chargesCount === 4) {
+      points = [dexterChief, sinisterChief, dexterBase, sinisterBase]
+    } else if (chargesCount === 5) {
+      points = [center, dexterChief, sinisterChief, dexterBase, sinisterBase]
+    }
+
+    return points.map((point, index) => {
+      return (
+        < Group
+          x={point.x - chargeSize / 2}
+          y={point.y - chargeSize / 2} >
+          {this.renderSelf(charges[index], chargeSize, chargeSize)}
+        </Group >
+      )
+    })
   }
 
   // Mobile Subordinary
@@ -941,14 +1089,14 @@ class PlainCrestRenderer extends CrestRenderer {
     const w = bounds.width
     const h = bounds.height
     /*this.value = (
-      <Rect
-        x={x}
-        y={y}
-        width={w}
-        height={h}
-        fill={colorTincture.colorHex}
-      />
-    )*/
+<Rect
+  x={x}
+  y={y}
+  width={w}
+  height={h}
+  fill={colorTincture.colorHex}
+/>
+)*/
     this.value = (
       <Rect
         x={0}

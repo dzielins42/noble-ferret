@@ -11,6 +11,7 @@ import { Saltire, Bend, Cross, Fess, Pale } from './model/Ordinary';
 import ColorTincture from './model/texture/ColorTincture';
 import { Billet, Lozenge, Mullet, Roundel } from './model/MobileSubordinary';
 import LozengeType from './model/LozengeType';
+import { EmptyCharge } from './model/Charge';
 
 function App() {
   const black = "#000000"
@@ -25,10 +26,21 @@ function App() {
     new SolidField(
       new Chequy(
         new ColorTincture(green),
-        new ColorTincture(blue)
+        new ColorTincture(blue),
       ),
     ),
-    []
+    [
+      new Saltire(
+        new ColorTincture(red),
+        [
+          new Roundel(new ColorTincture(yellow)),
+          new Roundel(new ColorTincture(yellow)),
+          new Roundel(new ColorTincture(yellow)),
+          new Roundel(new ColorTincture(yellow)),
+          new Roundel(new ColorTincture(yellow)),
+        ]
+      )
+    ]
   )
   return (
     <div className="App">

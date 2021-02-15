@@ -24,6 +24,14 @@ class Point {
       (this.y - other.y) * (this.y - other.y)
     )
   }
+
+  distanceX(other: Point): number {
+    return Math.abs(this.x - other.x)
+  }
+
+  distanceY(other: Point): number {
+    return Math.abs(this.y - other.y)
+  }
 }
 
 export default Point

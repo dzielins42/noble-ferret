@@ -1,3 +1,5 @@
+import Point from "./Point"
+
 class Rectangle {
   readonly top: number
   readonly left: number
@@ -30,6 +32,21 @@ class Rectangle {
 
   get centerVertical(): number {
     return this.top + this.height / 2
+  }
+
+  get center(): Point {
+    return new Point(
+      this.centerHorizontal,
+      this.centerVertical
+    )
+  }
+
+  get diagonal(): number {
+    return Math.sqrt(
+      this.height * this.height
+      +
+      this.width * this.width
+    )
   }
 }
 

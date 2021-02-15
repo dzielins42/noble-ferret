@@ -100,6 +100,14 @@ abstract class Escutcheon implements Visitable<ContextPathDrawer>{
     return this.bounds.width * this.T
   }
 
+  get mainLocation(): Rectangle {
+    const top = Math.max(this.dexterChief.y, this.sinisterChief.y)
+    const left = Math.max(this.dexterBase.x, this.dexterChief.x)
+    const bottom = Math.min(this.dexterBase.y, this.sinisterBase.y)
+    const right = Math.min(this.sinisterBase.x, this.sinisterChief.x)
+    return new Rectangle(top, left, bottom, right)
+  }
+
   private readonly T: number = 0.25
 
   abstract accept(visitor: ContextPathDrawer): void
