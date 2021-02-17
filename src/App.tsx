@@ -12,6 +12,7 @@ import ColorTincture from './model/texture/ColorTincture';
 import LozengeType from './model/LozengeType';
 import { Roundel } from './model/charge/MobileSubordinary';
 import { InBend, InFess, InPale } from './model/charge/GroupCharge';
+import CrestEditor from './CrestEditor';
 
 function App() {
   const black = "#000000"
@@ -48,7 +49,7 @@ function App() {
   )
   return (
     <div className="App">
-      <CrestPreview crest={crest} />
+      <CrestEditor />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>

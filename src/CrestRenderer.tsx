@@ -22,8 +22,8 @@ export abstract class CrestRenderer
   protected value: React.ReactNode = null
 
   render(
-    visitable: Visitable<Renderable>)
-    : React.ReactNode {
+    visitable: Visitable<Renderable>
+  ): React.ReactNode {
     visitable.accept(this)
     return this.value
   }

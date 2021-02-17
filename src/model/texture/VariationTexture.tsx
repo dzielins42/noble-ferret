@@ -20,7 +20,7 @@ abstract class TwoPartVariationTexture extends VariationTexture {
   }
 }
 
-abstract class ParameterizedTwoPartVariationTexture extends TwoPartVariationTexture {
+export abstract class ParameterizedTwoPartVariationTexture extends TwoPartVariationTexture {
   readonly count: number
 
   constructor(

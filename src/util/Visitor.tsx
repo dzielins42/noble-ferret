@@ -67,6 +67,17 @@ export interface TextureVisitor {
   visitRuste(ruste: Ruste): void
 }
 
+export abstract class BaseTextureVisitor implements TextureVisitor {
+  visitColorTincture(texture: ColorTincture): void { }
+  visitBarry(barry: Barry): void { }
+  visitPaly(paly: Paly): void { }
+  visitBendy(bendy: Bendy): void { }
+  visitChequy(chequy: Chequy): void { }
+  visitLozengy(lozengy: Lozengy): void { }
+  visitFusilly(fusilly: Fusilly): void { }
+  visitRuste(ruste: Ruste): void { }
+}
+
 export interface Visitable<VISITOR_TYPE> {
   accept(visitor: VISITOR_TYPE): void;
 }
