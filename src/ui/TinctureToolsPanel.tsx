@@ -1,22 +1,34 @@
 import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core"
-import React from "react"
+import React, { useState } from "react"
 import { CrestPaletteContext } from "../CrestPaletteContext"
 import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
-import { BaseTextureVisitor, TextureVisitor } from "../util/Visitor"
+import { useNonInitialEffect } from "../util/Hooks"
+import { BaseTextureVisitor } from "../util/Visitor"
 
 type TinctureToolsPanelProps = {
   tincture?: Tincture
-  onTinctureChange?: (tincture: Tincture) => void
+  onChange?: (tincture: Tincture) => void
 }
 
 type MultiTinctureToolsPanelProps = {
   tinctures: Tincture[]
-  onTincturesChange?: (tinctures: Tincture[]) => void
+  onChange?: (tinctures: Tincture[]) => void
 }
-
 
 export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
   const crestPalette = React.useContext(CrestPaletteContext)
+
+  const [tincture, setTincture] = useState<Tincture>(() => {
+    if (props.tincture === null || props.tincture === undefined) {
+      return randomTincture(crestPalette)
+    } else {
+      return props.tincture!
+    }
+  })
+
+  useNonInitialEffect(() => {
+    props.onChange ?.(tincture)
+  }, [tincture])
 
   const metals: { value: string, label: string, hex: string }[] = [
     { value: "or", label: "Or", hex: crestPalette.or },
@@ -39,12 +51,7 @@ export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
       initialValue = metals.find(({ hex }) => metalTincture.colorHex === hex) ?.value
     }
   }()
-
-  if (props.tincture === null) {
-    randomTincture(crestPalette).accept(tinctureVisitor)
-  } else {
-    props.tincture ?.accept(tinctureVisitor)
-  }
+  tincture.accept(tinctureVisitor)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedValue = event.target.value
@@ -53,13 +60,13 @@ export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
     // Metal
     hex = metals.find(({ value, label, hex }) => selectedValue === value) ?.hex
     if (hex !== undefined) {
-      props.onTinctureChange ?.(new MetalTincture(hex))
+      setTincture(new MetalTincture(hex))
       return
     }
     // Color
     hex = colors.find(({ value, label, hex }) => selectedValue === value) ?.hex
     if (hex !== undefined) {
-      props.onTinctureChange ?.(new ColorTincture(hex))
+      setTincture(new ColorTincture(hex))
       return
     }
   }
@@ -93,10 +100,10 @@ export const MultiTinctureToolsPanel = (props: MultiTinctureToolsPanelProps) => 
     tincturePanels.push(
       <TinctureToolsPanel
         tincture={props.tinctures[i]}
-        onTinctureChange={(tincture: Tincture) => {
+        onChange={(tincture: Tincture) => {
           const newTinctures = [...props.tinctures]
           newTinctures[i] = tincture
-          props.onTincturesChange ?.(newTinctures)
+          props.onChange ?.(newTinctures)
         }}
       />
     )

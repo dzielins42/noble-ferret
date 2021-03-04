@@ -1,16 +1,18 @@
 import { FormControl, InputLabel, Paper, Select, TextField } from "@material-ui/core"
+import _ from "lodash"
 import React from "react"
 import CrestPalette from "../CrestPalette"
 import { CrestPaletteContext } from "../CrestPaletteContext"
 import Texture from "../model/texture/Texture"
 import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
-import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, ParameterizedTwoPartVariationTexture, Ruste } from "../model/texture/VariationTexture"
+import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture"
+import { useNonInitialEffect } from "../util/Hooks"
 import { TextureVisitor } from "../util/Visitor"
 import { MultiTinctureToolsPanel, TinctureToolsPanel } from "./TinctureToolsPanel"
 
 type TextureToolsPanelProps = {
   texture: Texture
-  onTextureChange?: (texture: Texture) => void
+  onChange?: (texture: Texture) => void
 }
 
 type TextureOption = {
@@ -23,8 +25,8 @@ export const TextureToolsPanel = (props: TextureToolsPanelProps) => {
 
   const [texture, setTexture] = React.useState<Texture>(props.texture)
 
-  React.useEffect(() => {
-    props.onTextureChange ?.(texture)
+  useNonInitialEffect(() => {
+    props.onChange ?.(texture)
   }, [texture])
 
   const tinctures = getTinctures(
@@ -32,10 +34,17 @@ export const TextureToolsPanel = (props: TextureToolsPanelProps) => {
     2,
     crestPalette
   )
+  const parameter = getParameter(
+    texture
+  )
 
   const options = getOptions(
-    tinctures
+    tinctures, parameter
   )
+
+  const selectedValue = options.findIndex((option: TextureOption) => {
+    return _.isEqual(texture, option.factoryFunc())
+  })
 
   const content = getContent(
     texture,
@@ -55,6 +64,7 @@ export const TextureToolsPanel = (props: TextureToolsPanelProps) => {
         <InputLabel htmlFor="texture-type-select">Type</InputLabel>
         <Select
           native
+          value={selectedValue}
           onChange={handleChange}
           inputProps={{
             id: 'texture-type-select',
@@ -81,7 +91,8 @@ function getContent(
     visitColorTincture: (colorTincture: ColorTincture) => {
       content = (
         <TinctureToolsPanel
-          onTinctureChange={(tincture: Tincture) => {
+          tincture={colorTincture}
+          onChange={(tincture: Tincture) => {
             func(tincture)
           }}
         />
@@ -90,7 +101,8 @@ function getContent(
     visitMetalTincture: (metalTincture: MetalTincture) => {
       content = (
         <TinctureToolsPanel
-          onTinctureChange={(tincture: Tincture) => {
+          tincture={metalTincture}
+          onChange={(tincture: Tincture) => {
             func(tincture)
           }}
         />
@@ -100,7 +112,8 @@ function getContent(
     visitBarry: (barry: Barry) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={barry}
+          tinctures={[barry.tincture1, barry.tincture2]}
+          parameter={barry.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Barry(
               tinctures[0],
@@ -121,7 +134,8 @@ function getContent(
     visitPaly: (paly: Paly) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={paly}
+          tinctures={[paly.tincture1, paly.tincture2]}
+          parameter={paly.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Paly(
               tinctures[0],
@@ -142,7 +156,8 @@ function getContent(
     visitBendy: (bendy: Bendy) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={bendy}
+          tinctures={[bendy.tincture1, bendy.tincture2]}
+          parameter={bendy.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Bendy(
               tinctures[0],
@@ -165,7 +180,8 @@ function getContent(
     visitChequy: (chequy: Chequy) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={chequy}
+          tinctures={[chequy.tincture1, chequy.tincture2]}
+          parameter={chequy.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Chequy(
               tinctures[0],
@@ -186,7 +202,8 @@ function getContent(
     visitLozengy: (lozengy: Lozengy) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={lozengy}
+          tinctures={[lozengy.tincture1, lozengy.tincture2]}
+          parameter={lozengy.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Lozengy(
               tinctures[0],
@@ -207,7 +224,8 @@ function getContent(
     visitFusilly: (fusilly: Fusilly) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={fusilly}
+          tinctures={[fusilly.tincture1, fusilly.tincture2]}
+          parameter={fusilly.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Fusilly(
               tinctures[0],
@@ -228,7 +246,8 @@ function getContent(
     visitRuste: (ruste: Ruste) => {
       content = (
         <ParameterizedTwoPartVariationTextureToolsPanel
-          texture={ruste}
+          tinctures={[ruste.tincture1, ruste.tincture2]}
+          parameter={ruste.count}
           onTincturesChange={(tinctures: Tincture[]) => {
             func(new Ruste(
               tinctures[0],
@@ -253,7 +272,10 @@ function getContent(
   return content
 }
 
-function getOptions(tinctures: Tincture[]): TextureOption[] {
+function getOptions(
+  tinctures: Tincture[],
+  parameter: number | undefined
+): TextureOption[] {
   return [
     {
       label: "Solid",
@@ -267,6 +289,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Barry(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
@@ -276,6 +299,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Paly(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
@@ -285,7 +309,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Bendy(
           tinctures[0],
           tinctures[1],
-          3,
+          parameter,
           false
         )
       }
@@ -296,7 +320,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Bendy(
           tinctures[0],
           tinctures[1],
-          3,
+          parameter,
           true
         )
       }
@@ -307,6 +331,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Chequy(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
@@ -316,6 +341,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Lozengy(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
@@ -325,6 +351,7 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Fusilly(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
@@ -334,10 +361,49 @@ function getOptions(tinctures: Tincture[]): TextureOption[] {
         return new Ruste(
           tinctures[0],
           tinctures[1],
+          parameter,
         )
       }
     },
   ]
+}
+
+function getParameter(
+  texture: Texture
+): number | undefined {
+  let result = undefined
+
+  const visitor: TextureVisitor = {
+    // Tincture
+    visitColorTincture: () => { },
+    visitMetalTincture: () => { },
+    // Variation
+    visitBarry: (barry: Barry) => {
+      result = barry.count
+    },
+    visitPaly: (paly: Paly) => {
+      result = paly.count
+    },
+    visitBendy: (bendy: Bendy) => {
+      result = bendy.count
+    },
+    visitChequy: (chequy: Chequy) => {
+      result = chequy.count
+    },
+    visitLozengy: (lozengy: Lozengy) => {
+      result = lozengy.count
+    },
+    visitFusilly: (fusilly: Fusilly) => {
+      result = fusilly.count
+    },
+    visitRuste: (ruste: Ruste) => {
+      result = ruste.count
+    },
+  }
+
+  texture.accept(visitor)
+
+  return result
 }
 
 function getTinctures(
@@ -396,7 +462,8 @@ function getTinctures(
 }
 
 type ParameterizedTwoPartVariationTextureToolsPanelProps = {
-  texture: ParameterizedTwoPartVariationTexture
+  tinctures: Tincture[]
+  parameter: number
   onTincturesChange: (tinctures: Tincture[]) => void
   onParameterChange: (parameter: number) => void
 }
@@ -406,16 +473,16 @@ const ParameterizedTwoPartVariationTextureToolsPanel = (props: ParameterizedTwoP
     <>
       <MultiTinctureToolsPanel
         tinctures={
-          [props.texture.tincture1, props.texture.tincture2]
+          [props.tinctures[0], props.tinctures[1]]
         }
-        onTincturesChange={(tinctures: Tincture[]) => {
+        onChange={(tinctures: Tincture[]) => {
           props.onTincturesChange(tinctures)
         }}
       />
       <TextField
         label="Number"
         type="number"
-        value={props.texture.count}
+        value={props.parameter}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           const parameter = parseInt(event.target.value)
           props.onParameterChange(parameter)

@@ -1,13 +1,14 @@
-import { Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select } from "@material-ui/core"
-import React, { useRef, useState } from "react"
+import { FormControl, InputLabel, Paper, Select } from "@material-ui/core"
+import _ from "lodash"
+import React, { useState } from "react"
+import CrestPalette from "../CrestPalette"
 import { CrestPaletteContext } from "../CrestPaletteContext"
-import Crest from "../model/Crest"
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from "../model/field/DividedField"
 import Field from "../model/field/Field"
 import SolidField from "../model/field/SolidField"
 import Texture from "../model/texture/Texture"
-import { ColorTincture } from "../model/texture/Tincture"
-import { Chequy } from "../model/texture/VariationTexture"
+import { randomTincture } from "../model/texture/Tincture"
+import { useNonInitialEffect } from "../util/Hooks"
 import { FieldVisitor } from "../util/Visitor"
 import { TextureToolsPanel } from "./TextureToolsPanel"
 
@@ -21,17 +22,23 @@ export const FieldToolsPanel = (props: FieldToolsPanelProps) => {
 
   const [field, setField] = useState<Field>(props.field)
 
-  React.useEffect(() => {
+  useNonInitialEffect(() => {
     props.onChange ?.(field)
   }, [field])
 
-  const options = getOptions(
-    [
-      new ColorTincture(crestPalette.gules),
-      new ColorTincture(crestPalette.vert),
-      new ColorTincture(crestPalette.azure)
-    ]
+  const textures = getTextures(
+    field,
+    3,
+    crestPalette
   )
+
+  const options = getOptions(
+    textures
+  )
+
+  const selectedValue = options.findIndex((option: FieldOption) => {
+    return _.isEqual(field, option.factoryFunc())
+  })
 
   const content = getContent(
     field,
@@ -43,43 +50,13 @@ export const FieldToolsPanel = (props: FieldToolsPanelProps) => {
     setField(options[selectedValue].factoryFunc())
   }
 
-  /*return (
-    <Paper>
-      {content}
-    </Paper>
-  )*/
-  /*return (
-    <Paper>
-      <FormGroup row>
-        <FormControl >
-          <InputLabel id="field-type-select-label">Field type</InputLabel>
-          <Select
-            labelId="field-type-select-label"
-            id="field-type-select"
-            value={baseData.type}
-            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-              setBaseData({
-                type: event.target.value as FieldType
-              })
-            }}
-          >
-            {Array.from(fieldDivisionTypes).map(([key, value]) => {
-              return (< MenuItem value={key} >{value}</MenuItem>)
-            })}
-          </Select>
-        </FormControl>
-      </FormGroup>
-      <input ref={inputEl} type="text" />
-      <button onClick={onButtonClick}>Focus the input</button>
-      bbbccc
-    </Paper >
-  )*/
   return (
     <Paper>
       <FormControl>
         <InputLabel htmlFor="field-type-select">Type</InputLabel>
         <Select
           native
+          value={selectedValue}
           onChange={handleChange}
           inputProps={{
             id: 'field-type-select',
@@ -106,7 +83,7 @@ function getContent(
       content = (
         <TextureToolsPanel
           texture={field.texture}
-          onTextureChange={(texture: Texture) => {
+          onChange={(texture: Texture) => {
             onChange(new SolidField(texture))
           }}
         />
@@ -214,8 +191,8 @@ const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
   for (let i = 0; i < count; i++) {
     panels.push(
       <TextureToolsPanel
-        texture={props.textures[0]}
-        onTextureChange={(texture: Texture) => {
+        texture={props.textures[i]}
+        onChange={(texture: Texture) => {
           const newTextures = [...props.textures]
           newTextures[i] = texture
           props.onChange(newTextures)
@@ -227,6 +204,56 @@ const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
   return (
     <>{panels}</>
   )
+}
+
+function getTextures(
+  field: Field,
+  minCount: number,
+  crestPalette: CrestPalette
+): Texture[] {
+  const result: Texture[] = []
+
+  const visitor: FieldVisitor = {
+    visitSolidField: (field: SolidField) => {
+      result.push(field.texture)
+    },
+    visitPerFessDividedField: (field: PerFessDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerPaleDividedField: (field: PerPaleDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerBendDividedField: (field: PerBendDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerSaltireDividedField: (field: PerSaltireDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerCrossDividedField: (field: PerCrossDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerChevronDividedField: (field: PerChevronDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+    visitPerPallDividedField: (field: PerPallDividedField) => {
+      result.push(field.texture1)
+      result.push(field.texture2)
+    },
+  }
+
+  field.accept(visitor)
+
+  while (result.length < minCount) {
+    result.push(randomTincture(crestPalette))
+  }
+
+  return result
 }
 
 type FieldOption = {
