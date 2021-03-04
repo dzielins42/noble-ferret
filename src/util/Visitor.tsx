@@ -5,9 +5,9 @@ import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerF
 import SolidField from "../model/field/SolidField";
 import { Billet, Lozenge, Mullet, Roundel } from "../model/charge/MobileSubordinary";
 import { Bend, Cross, Fess, Pale, Saltire } from "../model/ordinary/Ordinary";
-import ColorTincture from "../model/texture/ColorTincture";
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture";
 import { InBend, InFess, InPale } from "../model/charge/GroupCharge";
+import { ColorTincture, MetalTincture } from "../model/texture/Tincture";
 
 /*export interface Visitor extends
   CrestVisitor, ChargeVisitor, FieldVisitor, EscutcheonVisitor, TextureVisitor, OrdinaryVisitor {
@@ -57,6 +57,7 @@ export interface ChargeVisitor {
 export interface TextureVisitor {
   // Tincture
   visitColorTincture(texture: ColorTincture): void
+  visitMetalTincture(metalTincture: MetalTincture): void
   // Variation
   visitBarry(barry: Barry): void
   visitPaly(paly: Paly): void
@@ -69,6 +70,7 @@ export interface TextureVisitor {
 
 export abstract class BaseTextureVisitor implements TextureVisitor {
   visitColorTincture(texture: ColorTincture): void { }
+  visitMetalTincture(metalTincture: MetalTincture): void { }
   visitBarry(barry: Barry): void { }
   visitPaly(paly: Paly): void { }
   visitBendy(bendy: Bendy): void { }

@@ -1,9 +1,7 @@
 import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core"
 import React from "react"
 import { CrestPaletteContext } from "../CrestPaletteContext"
-import ColorTincture from "../model/texture/ColorTincture"
-import MetalTincture from "../model/texture/MetalTincture"
-import Tincture from "../model/texture/Tincture"
+import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
 import { BaseTextureVisitor, TextureVisitor } from "../util/Visitor"
 
 type TinctureToolsPanelProps = {
@@ -35,12 +33,15 @@ export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
   let initialValue
   const tinctureVisitor = new class extends BaseTextureVisitor {
     visitColorTincture(texture: ColorTincture): void {
-      initialValue = colors.find(({ value, label, hex }) => texture.colorHex === hex) ?.value
+      initialValue = colors.find(({ hex }) => texture.colorHex === hex) ?.value
+    }
+    visitMetalTincture(metalTincture: MetalTincture): void {
+      initialValue = metals.find(({ hex }) => metalTincture.colorHex === hex) ?.value
     }
   }()
 
   if (props.tincture === null) {
-    new ColorTincture(crestPalette.randomColor()).accept(tinctureVisitor)
+    randomTincture(crestPalette).accept(tinctureVisitor)
   } else {
     props.tincture ?.accept(tinctureVisitor)
   }
@@ -52,8 +53,7 @@ export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
     // Metal
     hex = metals.find(({ value, label, hex }) => selectedValue === value) ?.hex
     if (hex !== undefined) {
-      // TODO: Change to MetalTincture
-      props.onTinctureChange ?.(new ColorTincture(hex))
+      props.onTinctureChange ?.(new MetalTincture(hex))
       return
     }
     // Color

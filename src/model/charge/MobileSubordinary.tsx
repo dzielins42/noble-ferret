@@ -1,6 +1,6 @@
 import { ChargeVisitor } from "../../util/Visitor";
 import LozengeType from "../LozengeType";
-import Tincture from "../texture/Tincture";
+import { Tincture } from "../texture/Tincture";
 import { Charge } from "./Charge";
 
 abstract class MobileSubordinary implements Charge {

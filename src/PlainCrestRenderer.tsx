@@ -2,14 +2,12 @@ import { CrestRenderer, Renderable } from './CrestRenderer'
 import Konva from 'konva'
 import { Shape, KonvaNodeComponent, Stage, Layer, Rect, Text, Circle, Line, Group, Star } from 'react-konva'
 import React from 'react'
-import ColorTincture from './model/texture/ColorTincture'
 import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerFessDividedField, PerPaleDividedField, PerPallDividedField, PerSaltireDividedField } from './model/field/DividedField'
 import SolidField from './model/field/SolidField'
 import Crest from './model/Crest'
 import { linear, linearP, slope } from './MathUtils'
 import BlankTexture from './model/texture/BlankTexture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
-import Tincture from './model/texture/Tincture'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
 import Escutcheon from './model/escutcheon/Escutcheon'
 import RectangleEscutcheon from './model/escutcheon/RectangleEscutcheon'
@@ -21,6 +19,7 @@ import LozengeType from './model/LozengeType'
 import ContextPathDrawer from './ContextPathDrawer'
 import { ChargeVisitor, CrestVisitor, FieldVisitor, TextureVisitor, Visitable } from './util/Visitor'
 import { InBend, InFess, InPale } from './model/charge/GroupCharge'
+import { ColorTincture, MetalTincture, Tincture } from './model/texture/Tincture'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -1142,20 +1141,6 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   visitColorTincture(colorTincture: ColorTincture): void {
-    const bounds = this.escutcheon.bounds
-    const x = bounds.left
-    const y = bounds.top
-    const w = bounds.width
-    const h = bounds.height
-    /*this.value = (
-<Rect
-  x={x}
-  y={y}
-  width={w}
-  height={h}
-  fill={colorTincture.colorHex}
-/>
-)*/
     this.value = (
       <Rect
         x={0}
@@ -1163,6 +1148,18 @@ class PlainCrestRenderer extends CrestRenderer {
         width={this.viewportWidth}
         height={this.viewportHeight}
         fill={colorTincture.colorHex}
+      />
+    )
+  }
+
+  visitMetalTincture(metalTincture: MetalTincture): void {
+    this.value = (
+      <Rect
+        x={0}
+        y={0}
+        width={this.viewportWidth}
+        height={this.viewportHeight}
+        fill={metalTincture.colorHex}
       />
     )
   }

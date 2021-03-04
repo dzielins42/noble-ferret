@@ -2,9 +2,8 @@ import { FormControl, InputLabel, Paper, Select, TextField } from "@material-ui/
 import React from "react"
 import CrestPalette from "../CrestPalette"
 import { CrestPaletteContext } from "../CrestPaletteContext"
-import ColorTincture from "../model/texture/ColorTincture"
 import Texture from "../model/texture/Texture"
-import Tincture from "../model/texture/Tincture"
+import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, ParameterizedTwoPartVariationTexture, Ruste } from "../model/texture/VariationTexture"
 import { TextureVisitor } from "../util/Visitor"
 import { MultiTinctureToolsPanel, TinctureToolsPanel } from "./TinctureToolsPanel"
@@ -80,6 +79,15 @@ function getContent(
   const contentVisitor: TextureVisitor = {
     // Tincture
     visitColorTincture: (colorTincture: ColorTincture) => {
+      content = (
+        <TinctureToolsPanel
+          onTinctureChange={(tincture: Tincture) => {
+            func(tincture)
+          }}
+        />
+      )
+    },
+    visitMetalTincture: (metalTincture: MetalTincture) => {
       content = (
         <TinctureToolsPanel
           onTinctureChange={(tincture: Tincture) => {
@@ -344,6 +352,9 @@ function getTinctures(
     visitColorTincture: (colorTincture: ColorTincture) => {
       tinctures.push(colorTincture)
     },
+    visitMetalTincture: (metalTincture: MetalTincture) => {
+      tinctures.push(metalTincture)
+    },
     // Variation
     visitBarry: (barry: Barry) => {
       tinctures.push(barry.tincture1)
@@ -378,7 +389,7 @@ function getTinctures(
   texture.accept(visitor)
 
   while (tinctures.length < minCount) {
-    tinctures.push(new ColorTincture(crestPalette.randomColor()))
+    tinctures.push(randomTincture(crestPalette))
   }
 
   return tinctures

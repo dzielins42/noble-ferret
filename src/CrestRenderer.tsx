@@ -3,10 +3,10 @@ import { PerBendDividedField, PerChevronDividedField, PerCrossDividedField, PerF
 import SolidField from './model/field/SolidField'
 import { Billet, Lozenge, Mullet, Roundel } from './model/charge/MobileSubordinary'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
-import ColorTincture from './model/texture/ColorTincture'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
 import { ChargeVisitor, CrestVisitor, FieldVisitor, OrdinaryVisitor, TextureVisitor, Visitable } from './util/Visitor'
 import { InBend, InFess, InPale } from './model/charge/GroupCharge'
+import { ColorTincture, MetalTincture } from './model/texture/Tincture'
 
 export abstract class CrestRenderer
   implements CrestVisitor, FieldVisitor, TextureVisitor, ChargeVisitor, OrdinaryVisitor {
@@ -40,6 +40,7 @@ export abstract class CrestRenderer
   abstract visitPerPallDividedField(field: PerPallDividedField): void
 
   abstract visitColorTincture(texture: ColorTincture): void
+  abstract visitMetalTincture(metalTincture: MetalTincture): void
   abstract visitBarry(barry: Barry): void
   abstract visitPaly(paly: Paly): void
   abstract visitBendy(bendy: Bendy): void

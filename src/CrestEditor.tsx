@@ -9,7 +9,6 @@ import Escutcheon from "./model/escutcheon/Escutcheon"
 import HeaterEscutcheon from "./model/escutcheon/HeaterEscutcheon"
 import SolidField from "./model/field/SolidField"
 import { Saltire } from "./model/ordinary/Ordinary"
-import ColorTincture from "./model/texture/ColorTincture"
 import { Chequy } from "./model/texture/VariationTexture"
 import logo from './logo.svg'
 import RectangleEscutcheon from "./model/escutcheon/RectangleEscutcheon"
@@ -17,13 +16,13 @@ import { FieldToolsPanel } from "./ui/FieldToolsPanel"
 import Field from "./model/field/Field"
 import { PerFessDividedField } from "./model/field/DividedField"
 import { TinctureToolsPanel } from "./ui/TinctureToolsPanel"
-import Tincture from "./model/texture/Tincture"
 import { TextureToolsPanel } from "./ui/TextureToolsPanel"
 import Texture from "./model/texture/Texture"
 import { CrestPaletteContext } from "./CrestPaletteContext"
 import { PastelCrestPalette } from "./CrestPalette"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { EscutcheonToolsPanel } from "./ui/EscutcheonToolsPanel"
+import { ColorTincture, Tincture } from "./model/texture/Tincture"
 
 type CrestEditorProps = {}
 

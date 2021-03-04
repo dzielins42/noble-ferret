@@ -1,6 +1,6 @@
 import { TextureVisitor } from "../../util/Visitor";
 import Texture from "./Texture";
-import Tincture from "./Tincture";
+import { Tincture } from "./Tincture";
 
 abstract class VariationTexture implements Texture {
   abstract accept(visitor: TextureVisitor): void
