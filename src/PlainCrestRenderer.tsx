@@ -317,14 +317,14 @@ class PlainCrestRenderer extends CrestRenderer {
 
   // Variation
   visitBarry(barry: Barry): void {
-    const h = this.bounds.height / (barry.count * 2)
+    const h = this.bounds.height / (barry.count)
     const w = this.bounds.width
     this.value = (
       <Group>
         {this.renderSelf(barry.tincture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            for (let i = 0; i < barry.count; i++) {
+            for (let i = 0; i < barry.count / 2; i++) {
               ctx.rect(
                 this.bounds.left, this.bounds.top + 2 * i * h,
                 w, h
@@ -339,14 +339,14 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   visitPaly(paly: Paly): void {
-    const w = this.bounds.width / (paly.count * 2)
+    const w = this.bounds.width / (paly.count)
     const h = this.bounds.height
     this.value = (
       <Group>
         {this.renderSelf(paly.tincture2)}
         <Group
           clipFunc={(ctx: Konva.Context) => {
-            for (let i = 0; i < paly.count; i++) {
+            for (let i = 0; i < paly.count / 2; i++) {
               ctx.rect(
                 this.bounds.left + 2 * i * w, this.bounds.top,
                 w, h
@@ -364,7 +364,7 @@ class PlainCrestRenderer extends CrestRenderer {
     const w = this.bounds.width
     const h = this.bounds.height
     const dimen = Math.SQRT2 * (w + h) / 2
-    const t = dimen / (bendy.count * 2)
+    const t = dimen / (bendy.count)
     this.value = (
       <Group>
         {this.renderSelf(bendy.tincture2)}
@@ -388,7 +388,7 @@ class PlainCrestRenderer extends CrestRenderer {
   visitChequy(chequy: Chequy): void {
     const w = this.bounds.width
     const h = this.bounds.height
-    const d = Math.min(w, h) / (chequy.count * 2)
+    const d = Math.min(w, h) / (chequy.count)
     const rowCount = Math.ceil(h / d / 2)
     const colCount = Math.ceil(w / d / 2)
     this.value = (
