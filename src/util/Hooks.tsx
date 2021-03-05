@@ -1,4 +1,4 @@
-import { DependencyList, EffectCallback, useEffect, useRef } from "react";
+import { DependencyList, EffectCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export const useNonInitialEffect = (
   effect: EffectCallback,
@@ -20,3 +20,17 @@ export const useNonInitialEffect = (
     }
   }, deps);
 };
+
+export const useWindowSize = () => {
+  const [size, setSize] = useState([0, 0])
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight])
+    }
+    window.addEventListener('resize', updateSize)
+    updateSize()
+    return () => window.removeEventListener('resize', updateSize)
+  }, [])
+
+  return size
+}

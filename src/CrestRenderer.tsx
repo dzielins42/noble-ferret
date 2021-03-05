@@ -15,6 +15,7 @@ export abstract class CrestRenderer
   protected readonly viewportHeight: number
 
   constructor(viewportWidth: number, viewportHeight: number) {
+    console.log("CrestRenderer", viewportWidth, viewportHeight)
     this.viewportWidth = viewportWidth
     this.viewportHeight = viewportHeight
   }

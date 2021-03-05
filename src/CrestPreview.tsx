@@ -1,53 +1,43 @@
-import React, { createRef, useRef } from 'react'
+import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Crest from './model/Crest'
 import { Stage, Layer, Rect, Text, Circle, Line } from 'react-konva'
 import PlainCrestRenderer from './PlainCrestRenderer'
 import Escutcheon from './model/escutcheon/Escutcheon'
+import { useWindowSize } from './util/Hooks'
 
 type CrestPreviewProps = {
   crest: Crest
   escutcheon: Escutcheon
 }
 
-type CrestPreviewState = {
-  viewportWidth: number
-  viewportHeight: number
+export const CrestPreview = (props: CrestPreviewProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [windowWidth, windowHeight] = useWindowSize();
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
+  const viewportSize = { width: 1000, height: 750 }
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      const parentWidth = containerRef.current.offsetWidth
+      setCanvasSize({
+        width: parentWidth,
+        height: 0.75 * parentWidth
+      })
+    }
+  }, [containerRef, windowWidth]);
+
+  const renderer = new PlainCrestRenderer(
+    viewportSize.width, viewportSize.height, props.escutcheon
+  )
+  const scale = canvasSize.width / viewportSize.width
+  return (
+    <div ref={containerRef}>
+      <Stage
+        width={canvasSize.width}
+        height={canvasSize.height}
+        scale={{ x: scale, y: scale }}>
+        {renderer.render(props.crest)}
+      </Stage>
+    </div >
+  )
 }
-
-class CrestPreview
-  extends React.Component<CrestPreviewProps, CrestPreviewState>
-{
-  private viewportRef = createRef<HTMLDivElement>()
-
-  state = {
-    viewportWidth: 800,
-    viewportHeight: 600
-  }
-
-  componentDidMount() {
-    /*const width: number = this.viewportRef.current ?.clientWidth || 0
-    const height: number = this.viewportRef.current ?.clientHeight || 0
-    this.setState({
-      viewportWidth: width,
-      viewportHeight: height
-    })*/
-  }
-
-  render() {
-    var canvasWidth = this.state.viewportWidth//200
-    var canvasHeight = this.state.viewportHeight//200
-    const dimen = Math.min(canvasWidth, canvasHeight) * 0.75
-    const x = (canvasWidth - dimen) / 2
-    const y = (canvasHeight - dimen) / 2
-    var renderer = new PlainCrestRenderer(canvasWidth, canvasHeight, this.props.escutcheon)
-    return (
-      <div ref={this.viewportRef}>
-        <Stage width={canvasWidth} height={canvasHeight} fill="green">
-          {renderer.render(this.props.crest)}
-        </Stage>
-      </div >
-    )
-  }
-}
-
-export default CrestPreview
