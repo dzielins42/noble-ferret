@@ -36,6 +36,14 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
       color: theme.palette.text.secondary,
     },
+    toolsPanel: {
+      flexDirection: "column",
+      // Direct children
+      '& > *': {
+        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(2),
+      }
+    }
   }),
 );
 
@@ -103,7 +111,7 @@ export const CrestEditor = (props: CrestEditorProps) => {
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Escutcheon</Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails className={classes.toolsPanel}>
                     <EscutcheonToolsPanel escutcheon={escutcheon} onChange={handleEscutcheonChange} />
                   </AccordionDetails>
                 </Accordion>
@@ -111,7 +119,7 @@ export const CrestEditor = (props: CrestEditorProps) => {
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Field</Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails className={classes.toolsPanel}>
                     <FieldToolsPanel field={crest.field} onChange={handleFieldChange} />
                   </AccordionDetails>
                 </Accordion>

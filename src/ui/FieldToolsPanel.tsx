@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Paper, Select } from "@material-ui/core"
+import { FormControl, FormLabel, InputLabel, Paper, Select } from "@material-ui/core"
 import _ from "lodash"
 import React, { useState } from "react"
 import CrestPalette from "../CrestPalette"
@@ -51,7 +51,7 @@ export const FieldToolsPanel = (props: FieldToolsPanelProps) => {
   }
 
   return (
-    <Paper>
+    <>
       <FormControl>
         <InputLabel htmlFor="field-type-select">Type</InputLabel>
         <Select
@@ -68,7 +68,7 @@ export const FieldToolsPanel = (props: FieldToolsPanelProps) => {
         </Select>
       </FormControl>
       {content}
-    </Paper>
+    </>
   )
 }
 
@@ -81,10 +81,13 @@ function getContent(
   const contentVisitor: FieldVisitor = {
     visitSolidField: (field: SolidField) => {
       content = (
-        <TextureToolsPanel
-          texture={field.texture}
-          onChange={(texture: Texture) => {
-            onChange(new SolidField(texture))
+        <MultiTextureToolsPanel
+          withLabels={true}
+          textures={[field.texture]}
+          onChange={(textures: Texture[]) => {
+            onChange(new SolidField(
+              textures[0]
+            ))
           }}
         />
       )
@@ -92,6 +95,7 @@ function getContent(
     visitPerFessDividedField: (field: PerFessDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerFessDividedField(
@@ -104,6 +108,7 @@ function getContent(
     visitPerPaleDividedField: (field: PerPaleDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerPaleDividedField(
@@ -116,6 +121,7 @@ function getContent(
     visitPerBendDividedField: (field: PerBendDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerBendDividedField(
@@ -128,6 +134,7 @@ function getContent(
     visitPerSaltireDividedField: (field: PerSaltireDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerSaltireDividedField(
@@ -140,6 +147,7 @@ function getContent(
     visitPerCrossDividedField: (field: PerCrossDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerCrossDividedField(
@@ -152,6 +160,7 @@ function getContent(
     visitPerChevronDividedField: (field: PerChevronDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2]}
           onChange={(textures: Texture[]) => {
             onChange(new PerChevronDividedField(
@@ -164,6 +173,7 @@ function getContent(
     visitPerPallDividedField: (field: PerPallDividedField) => {
       content = (
         <MultiTextureToolsPanel
+          withLabels={true}
           textures={[field.texture1, field.texture2, field.texture3]}
           onChange={(textures: Texture[]) => {
             onChange(new PerPallDividedField(
@@ -182,22 +192,35 @@ function getContent(
 
 type MultiTextureToolsPanel = {
   textures: Texture[],
-  onChange: (textures: Texture[]) => void
+  onChange: (textures: Texture[]) => void,
+  withLabels?: boolean
 }
 
 const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
   const count = props.textures.length
   const panels = []
   for (let i = 0; i < count; i++) {
+    let label
+    if (props.withLabels === true) {
+      label = "Texture"
+      if (count !== 1) {
+        label += " " + (i + 1)
+      }
+    }
     panels.push(
-      <TextureToolsPanel
-        texture={props.textures[i]}
-        onChange={(texture: Texture) => {
-          const newTextures = [...props.textures]
-          newTextures[i] = texture
-          props.onChange(newTextures)
-        }}
-      />
+      <>
+        {props.withLabels !== undefined &&
+          <FormLabel component="legend">{label}</FormLabel>
+        }
+        <TextureToolsPanel
+          texture={props.textures[i]}
+          onChange={(texture: Texture) => {
+            const newTextures = [...props.textures]
+            newTextures[i] = texture
+            props.onChange(newTextures)
+          }}
+        />
+      </>
     )
   }
 
