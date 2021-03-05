@@ -279,6 +279,8 @@ class PlainCrestRenderer extends CrestRenderer {
             ctx.moveTo(bounds.left, fun(bounds.left))
             ctx.lineTo(fessPoint.x, fessPoint.y)
             ctx.lineTo(bounds.right, fun(bounds.right))
+            ctx.lineTo(bounds.right, field.inverted ? bounds.top : bounds.bottom)
+            ctx.lineTo(bounds.left, field.inverted ? bounds.top : bounds.bottom)
             ctx.closePath()
           }}
         >
