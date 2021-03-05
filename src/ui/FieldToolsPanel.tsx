@@ -244,6 +244,7 @@ function getTextures(
     visitPerPallDividedField: (field: PerPallDividedField) => {
       result.push(field.texture1)
       result.push(field.texture2)
+      result.push(field.texture3)
     },
   }
 
