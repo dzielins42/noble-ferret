@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Container, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Typography } from "@material-ui/core"
-import React from "react"
+import React, { useState } from "react"
 import AspectRatio from "./AspectRatio"
 import CrestPreview from "./CrestPreview"
 import { InBend } from "./model/charge/GroupCharge"
@@ -26,152 +26,78 @@ import { ColorTincture, MetalTincture, Tincture } from "./model/texture/Tincture
 
 type CrestEditorProps = {}
 
-type CrestEditorState = {
-  escutcheon: Escutcheon,
-  crest: Crest
-}
+export const CrestEditor = (props: CrestEditorProps) => {
+  const crestPalette = new PastelCrestPalette()
 
-type NamedEscutcheon = {
-  escutcheon: Escutcheon,
-  name: string
-}
-
-class CrestEditor
-  extends React.Component<CrestEditorProps, CrestEditorState>
-{
-  constructor(props: CrestEditorProps) {
-    super(props)
-
-    const black = "#000000"
-    const white = "#ffffff"
-    const red = "#ffb3ba"
-    const orange = "#ffdfba"
-    const yellow = "#ffffba"
-    const green = "#baffc9"
-    const blue = "#bae1ff"
-
-    this.state = {
-      escutcheon: new HeaterEscutcheon(50, 50, 100),
-      crest: new Crest(
-        new PerFessDividedField(
-          new Chequy(
-            new ColorTincture(green),
-            new ColorTincture(blue),
-            4,
-          ),
-          new ColorTincture(red),
+  const [escutcheon, setEscutcheon] = useState<Escutcheon>(
+    new HeaterEscutcheon(50, 50, 100)
+  )
+  const [crest, setCrest] = useState<Crest>(
+    new Crest(
+      new PerFessDividedField(
+        new Chequy(
+          new ColorTincture(crestPalette.vert),
+          new ColorTincture(crestPalette.azure),
+          4,
         ),
-        /*[
-          new Saltire(
-            new ColorTincture(red),
-            [
-              new InBend([
-                new Roundel(new ColorTincture(black)),
-                new Roundel(new ColorTincture(black)),
-                new Roundel(new ColorTincture(black))
-              ]),
-              new Roundel(new ColorTincture(yellow)),
-              new Roundel(new ColorTincture(yellow)),
-              new Roundel(new ColorTincture(yellow)),
-              new Roundel(new ColorTincture(yellow)),
-            ]
-          )
-        ]*/
-      )
-    }
-  }
-
-  render() {
-    const handleEscutcheonChange = (escutcheon: Escutcheon) => {
-      console.log("Escutcheon changed")
-      this.setState({ escutcheon: escutcheon })
-    }
-    const handleFieldChange = (field: Field) => {
-      console.log("Field changed")
-      this.setState((state, props) => ({
-        crest: new Crest(
-          field,
-          state.crest.ordinaries
+        new ColorTincture(crestPalette.gules),
+      ),
+      /*[
+        new Saltire(
+          new ColorTincture(red),
+          [
+            new InBend([
+              new Roundel(new ColorTincture(black)),
+              new Roundel(new ColorTincture(black)),
+              new Roundel(new ColorTincture(black))
+            ]),
+            new Roundel(new ColorTincture(yellow)),
+            new Roundel(new ColorTincture(yellow)),
+            new Roundel(new ColorTincture(yellow)),
+            new Roundel(new ColorTincture(yellow)),
+          ]
         )
-      }))
-    }
-    const handleTinctureChange = (tincture: Tincture) => {
-      this.setState((state, props) => ({
-        crest: new Crest(
-          new SolidField(tincture),
-          state.crest.ordinaries
-        )
-      }))
-    }
-    const handleTextureChange = (texture: Texture) => {
-      this.setState((state, props) => ({
-        crest: new Crest(
-          new SolidField(texture),
-          state.crest.ordinaries
-        )
-      }))
-    }
-
-    /*
-    <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Escutcheon</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <EscutcheonToolsPanel escutcheon={this.state.escutcheon} onChange={handleEscutcheonChange} />
-      </AccordionDetails>
-    </Accordion>
-    <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Field</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <FieldToolsPanel field={this.state.crest.field} onChange={handleFieldChange} />
-      </AccordionDetails>
-    </Accordion>
-    */
-
-    /*
-    <CrestPaletteContext.Consumer>
-      {(props) => {
-        const texture = new Bendy(new ColorTincture(props.gules), new MetalTincture(props.or), 10, true)//new ColorTincture(props.gules)
-        return (
-          <>
-            <TextureToolsPanel texture={texture} onChange={(texture: Texture) => { console.log("texture", texture) }} />
-          </>
-        )
-      }}
-    </CrestPaletteContext.Consumer>
-    */
-
-    return (
-      <Container >
-        <CrestPaletteContext.Provider value={new PastelCrestPalette()}>
-          <div>
-            <CrestPreview crest={this.state.crest} escutcheon={this.state.escutcheon} />
-          </div>
-          <div>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Escutcheon</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <EscutcheonToolsPanel escutcheon={this.state.escutcheon} onChange={handleEscutcheonChange} />
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Field</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <FieldToolsPanel field={this.state.crest.field} onChange={handleFieldChange} />
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        </CrestPaletteContext.Provider>
-      </Container >
+      ]*/
     )
-  }
-}
+  )
 
-export default CrestEditor
+  const handleEscutcheonChange = (escutcheon: Escutcheon) => {
+    console.log("Escutcheon changed")
+    setEscutcheon(escutcheon)
+  }
+  const handleFieldChange = (field: Field) => {
+    console.log("Field changed")
+    setCrest(new Crest(
+      field,
+      crest.ordinaries
+    ))
+  }
+
+  return (
+    <Container >
+      <CrestPaletteContext.Provider value={new PastelCrestPalette()}>
+        <div>
+          <CrestPreview crest={crest} escutcheon={escutcheon} />
+        </div>
+        <div>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Escutcheon</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <EscutcheonToolsPanel escutcheon={escutcheon} onChange={handleEscutcheonChange} />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Field</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FieldToolsPanel field={crest.field} onChange={handleFieldChange} />
+            </AccordionDetails>
+          </Accordion>
+        </div>
+      </CrestPaletteContext.Provider>
+    </Container >
+  )
+}

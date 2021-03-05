@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import CrestEditor from './CrestEditor';
+import React from 'react';
+import { CrestEditor } from './CrestEditor';
 
 function App() {
   return (
