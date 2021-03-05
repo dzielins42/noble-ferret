@@ -41,10 +41,8 @@ class PlainCrestRenderer extends CrestRenderer {
   }
 
   visitCrest(crest: Crest): void {
-    const x = this.escutcheon.dexter.x
-    const y = this.escutcheon.chief.y
-    const w = this.escutcheon.sinister.x - this.escutcheon.dexter.x
-    const h = this.escutcheon.base.y - this.escutcheon.chief.y
+    const escutcheonBounds = this.escutcheon.bounds
+
     this.value = (
       <Layer>
         <Group
@@ -57,20 +55,6 @@ class PlainCrestRenderer extends CrestRenderer {
             return this.renderSelf(ordinary)
           })}
         </Group>
-        <Rect
-          x={x}
-          y={y}
-          width={w}
-          height={h}
-          stroke="black"
-        />
-        <Rect
-          x={x}
-          y={y}
-          width={w}
-          height={w}
-          stroke="black"
-        />
         <Shape
           sceneFunc={(context, shape) => {
             const drawer = new ContextPathDrawer(context)
@@ -78,7 +62,14 @@ class PlainCrestRenderer extends CrestRenderer {
             // (!) Konva specific method, it is very important
             context.fillStrokeShape(shape);
           }}
-          //fill="#00D2FF55"
+          stroke="black"
+          strokeWidth={4}
+        />
+        <Rect
+          x={escutcheonBounds.left}
+          y={escutcheonBounds.top}
+          width={escutcheonBounds.width}
+          height={escutcheonBounds.height}
           stroke="black"
           strokeWidth={4}
         />

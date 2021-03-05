@@ -48,15 +48,14 @@ export const CrestEditor = (props: CrestEditorProps) => {
   )
   const [crest, setCrest] = useState<Crest>(
     new Crest(
-      new SolidField(new ColorTincture(crestPalette.gules))
-      /*new PerFessDividedField(
+      new PerFessDividedField(
         new Chequy(
           new ColorTincture(crestPalette.vert),
           new ColorTincture(crestPalette.azure),
           4,
         ),
         new ColorTincture(crestPalette.gules),
-      ),*/
+      ),
       /*[
         new Saltire(
           new ColorTincture(red),

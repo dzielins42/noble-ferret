@@ -8,6 +8,7 @@ import { Bend, Cross, Fess, Pale, Saltire } from "../model/ordinary/Ordinary";
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture";
 import { InBend, InFess, InPale } from "../model/charge/GroupCharge";
 import { ColorTincture, MetalTincture } from "../model/texture/Tincture";
+import CircleEscutcheon from "../model/escutcheon/CircleEscutcheon";
 
 /*export interface Visitor extends
   CrestVisitor, ChargeVisitor, FieldVisitor, EscutcheonVisitor, TextureVisitor, OrdinaryVisitor {
@@ -31,7 +32,8 @@ export interface FieldVisitor {
 
 export interface EscutcheonVisitor {
   visitHeaterEscutcheon(escutcheon: HeaterEscutcheon): void
-  visitRectangleEscutcheon(rescutcheon: RectangleEscutcheon): void
+  visitRectangleEscutcheon(escutcheon: RectangleEscutcheon): void
+  visitCircleEscutcheon(escutcheon: CircleEscutcheon): void
 }
 
 export interface OrdinaryVisitor {

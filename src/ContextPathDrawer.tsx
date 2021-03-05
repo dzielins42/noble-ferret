@@ -1,4 +1,5 @@
 import Konva from "konva";
+import CircleEscutcheon from "./model/escutcheon/CircleEscutcheon";
 import HeaterEscutcheon from "./model/escutcheon/HeaterEscutcheon";
 import RectangleEscutcheon from "./model/escutcheon/RectangleEscutcheon";
 import { EscutcheonVisitor, Visitable } from "./util/Visitor";
@@ -29,6 +30,17 @@ class ContextPathDrawer implements EscutcheonVisitor {
     this.context.lineTo(visitable.bounds.right, visitable.bounds.bottom)
     this.context.lineTo(visitable.bounds.left, visitable.bounds.bottom)
     this.context.closePath()
+  }
+
+  visitCircleEscutcheon(visitable: CircleEscutcheon): void {
+    const center = visitable.bounds.center
+    this.context.beginPath()
+    this.context.arc(
+      center.x, center.y,
+      visitable.bounds.width / 2,
+      0, 2 * Math.PI,
+      false
+    )
   }
 }
 

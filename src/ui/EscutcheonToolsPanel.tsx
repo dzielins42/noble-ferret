@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, Paper, Select } from "@material-ui/core"
 import _ from "lodash"
 import React from "react"
+import CircleEscutcheon from "../model/escutcheon/CircleEscutcheon"
 import Escutcheon from "../model/escutcheon/Escutcheon"
 import HeaterEscutcheon from "../model/escutcheon/HeaterEscutcheon"
 import RectangleEscutcheon from "../model/escutcheon/RectangleEscutcheon"
@@ -73,7 +74,7 @@ function getOptions(): EscutcheonOption[] {
     {
       label: "Square",
       factoryFunc: () => {
-        return new RectangleEscutcheon(50, 50, 100, 100)
+        return new RectangleEscutcheon(50, 50, 400, 400)
       }
 
     },
@@ -88,6 +89,12 @@ function getOptions(): EscutcheonOption[] {
       factoryFunc: () => {
         return new RectangleEscutcheon(50, 50, 400, 200)
       }
-    }
+    },
+    {
+      label: "Circle",
+      factoryFunc: () => {
+        return new CircleEscutcheon(50, 50, 200)
+      }
+    },
   ]
 }
