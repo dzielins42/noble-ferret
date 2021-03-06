@@ -4,6 +4,7 @@ import { Stage, Layer, Rect, Text, Circle, Line } from 'react-konva'
 import PlainCrestRenderer from './PlainCrestRenderer'
 import Escutcheon from './model/escutcheon/Escutcheon'
 import { useWindowSize } from './util/Hooks'
+import { CrestPaletteContext } from './CrestPaletteContext'
 
 type CrestPreviewProps = {
   crest: Crest
@@ -11,6 +12,8 @@ type CrestPreviewProps = {
 }
 
 export const CrestPreview = (props: CrestPreviewProps) => {
+  const crestPalette = React.useContext(CrestPaletteContext)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const [windowWidth, windowHeight] = useWindowSize();
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
@@ -27,7 +30,7 @@ export const CrestPreview = (props: CrestPreviewProps) => {
   }, [containerRef, windowWidth]);
 
   const renderer = new PlainCrestRenderer(
-    viewportSize.width, viewportSize.height, props.escutcheon
+    viewportSize.width, viewportSize.height, crestPalette, props.escutcheon
   )
   const scale = canvasSize.width / viewportSize.width
   return (

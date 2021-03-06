@@ -21,12 +21,12 @@ import { CrestPaletteContext } from "./CrestPaletteContext"
 import { PastelCrestPalette } from "./CrestPalette"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { EscutcheonToolsPanel } from "./ui/EscutcheonToolsPanel"
-import { ColorTincture, MetalTincture, Tincture } from "./model/texture/Tincture"
+import { AzureTincture, GulesTincture, OrTincture, Tincture, VertTincture } from "./model/texture/Tincture"
 import { CrestPreview } from "./CrestPreview"
 
 type CrestEditorProps = {}
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
@@ -43,7 +43,17 @@ const useStyles = makeStyles((theme: Theme) =>
         paddingTop: theme.spacing(2),
         paddingBottom: theme.spacing(2),
       }
-    }
+    },
+    tinctureItem: {
+      width: "30%",
+      minWidth: 100,
+      margin: theme.spacing(0.5),
+      '& div': {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+      }
+    },
   }),
 );
 
@@ -58,11 +68,11 @@ export const CrestEditor = (props: CrestEditorProps) => {
     new Crest(
       new PerFessDividedField(
         new Chequy(
-          new ColorTincture(crestPalette.vert),
-          new ColorTincture(crestPalette.azure),
+          VertTincture,
+          AzureTincture,
           4,
         ),
-        new ColorTincture(crestPalette.gules),
+        OrTincture,
       ),
       /*[
         new Saltire(

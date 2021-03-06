@@ -7,7 +7,7 @@ import { Billet, Lozenge, Mullet, Roundel } from "../model/charge/MobileSubordin
 import { Bend, Cross, Fess, Pale, Saltire } from "../model/ordinary/Ordinary";
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture";
 import { InBend, InFess, InPale } from "../model/charge/GroupCharge";
-import { ColorTincture, MetalTincture } from "../model/texture/Tincture";
+import { StandardTincture } from "../model/texture/Tincture";
 import CircleEscutcheon from "../model/escutcheon/CircleEscutcheon";
 
 /*export interface Visitor extends
@@ -56,11 +56,11 @@ export interface ChargeVisitor {
   visitInBend(inBend: InBend): void
 }
 
-export interface TextureVisitor {
-  // Tincture
-  visitColorTincture(texture: ColorTincture): void
-  visitMetalTincture(metalTincture: MetalTincture): void
-  // Variation
+export interface TinctureVisitor {
+  visitStandardTincture(standardTincture: StandardTincture): void
+}
+
+export interface TextureVisitor extends TinctureVisitor {
   visitBarry(barry: Barry): void
   visitPaly(paly: Paly): void
   visitBendy(bendy: Bendy): void
@@ -71,8 +71,7 @@ export interface TextureVisitor {
 }
 
 export abstract class BaseTextureVisitor implements TextureVisitor {
-  visitColorTincture(texture: ColorTincture): void { }
-  visitMetalTincture(metalTincture: MetalTincture): void { }
+  visitStandardTincture(standardTincture: StandardTincture): void { }
   visitBarry(barry: Barry): void { }
   visitPaly(paly: Paly): void { }
   visitBendy(bendy: Bendy): void { }

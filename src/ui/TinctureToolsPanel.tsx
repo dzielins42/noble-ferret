@@ -1,9 +1,11 @@
-import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@material-ui/core"
+import { Paper, useTheme } from "@material-ui/core"
+import { ToggleButton } from "@material-ui/lab"
 import React, { useState } from "react"
+import { useStyles } from "../CrestEditor"
 import { CrestPaletteContext } from "../CrestPaletteContext"
-import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
+import { ArgentTincture, AzureTincture, GulesTincture, OrTincture, PurpleTincture, randomTincture, SableTincture, StandardTincture, Tincture, VertTincture } from "../model/texture/Tincture"
 import { useNonInitialEffect } from "../util/Hooks"
-import { BaseTextureVisitor } from "../util/Visitor"
+import { TinctureVisitor } from "../util/Visitor"
 
 type TinctureToolsPanelProps = {
   tincture?: Tincture
@@ -15,12 +17,18 @@ type MultiTinctureToolsPanelProps = {
   onChange?: (tinctures: Tincture[]) => void
 }
 
+type TinctureOption = {
+  label: string,
+  tincture: Tincture,
+}
+
 export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
   const crestPalette = React.useContext(CrestPaletteContext)
+  const classes = useStyles()
 
   const [tincture, setTincture] = useState<Tincture>(() => {
     if (props.tincture === null || props.tincture === undefined) {
-      return randomTincture(crestPalette)
+      return randomTincture()
     } else {
       return props.tincture!
     }
@@ -30,66 +38,67 @@ export const TinctureToolsPanel = (props: TinctureToolsPanelProps) => {
     props.onChange ?.(tincture)
   }, [tincture])
 
-  const metals: { value: string, label: string, hex: string }[] = [
-    { value: "or", label: "Or", hex: crestPalette.or },
-    { value: "argent", label: "Argent", hex: crestPalette.argent },
+  const options: TinctureOption[] = [
+    { label: "Or", tincture: OrTincture },
+    { label: "Argent", tincture: ArgentTincture },
+    { label: "Gules", tincture: GulesTincture },
+    { label: "Sable", tincture: SableTincture },
+    { label: "Azure", tincture: AzureTincture },
+    { label: "Vert", tincture: VertTincture },
+    { label: "Purple", tincture: PurpleTincture },
   ]
-  const colors: { value: string, label: string, hex: string }[] = [
-    { value: "gules", label: "Gules", hex: crestPalette.gules },
-    { value: "sable", label: "Sable", hex: crestPalette.sable },
-    { value: "azure", label: "Azure", hex: crestPalette.azure },
-    { value: "vert", label: "Vert", hex: crestPalette.vert },
-    { value: "purple", label: "Purple", hex: crestPalette.purple },
-  ]
-
-  let initialValue
-  const tinctureVisitor = new class extends BaseTextureVisitor {
-    visitColorTincture(texture: ColorTincture): void {
-      initialValue = colors.find(({ hex }) => texture.colorHex === hex) ?.value
-    }
-    visitMetalTincture(metalTincture: MetalTincture): void {
-      initialValue = metals.find(({ hex }) => metalTincture.colorHex === hex) ?.value
-    }
-  }()
-  tincture.accept(tinctureVisitor)
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedValue = event.target.value
-    let hex
-
-    // Metal
-    hex = metals.find(({ value, label, hex }) => selectedValue === value) ?.hex
-    if (hex !== undefined) {
-      setTincture(new MetalTincture(hex))
-      return
-    }
-    // Color
-    hex = colors.find(({ value, label, hex }) => selectedValue === value) ?.hex
-    if (hex !== undefined) {
-      setTincture(new ColorTincture(hex))
-      return
-    }
-  }
 
   return (
-    <Paper>
-      <FormControl component="fieldset">
-        <RadioGroup value={initialValue} onChange={handleChange}>
-          <FormLabel component="legend">Metal</FormLabel>
-          {metals.map(({ value, label, hex }) => {
-            return (
-              <FormControlLabel value={value} control={<Radio />} label={label} />
-            )
-          })}
-          <FormLabel component="legend">Colour</FormLabel>
-          {colors.map(({ value, label, hex }) => {
-            return (
-              <FormControlLabel value={value} control={<Radio />} label={label} />
-            )
-          })}
-        </RadioGroup>
-      </FormControl>
-    </Paper >
+    <>
+      <div>
+        {options.map((option) => {
+          return (
+            <ToggleButton
+              size="small"
+              selected={option.tincture === tincture}
+              className={classes.tinctureItem}
+              onChange={() => {
+                setTincture(option.tincture)
+              }}
+            >
+              <div>
+                <TinctureSample tincture={option.tincture} />
+                {option.label}
+              </div>
+            </ToggleButton>
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
+type TinctureSampleProps = {
+  tincture: Tincture
+}
+
+export const TinctureSample = (props: TinctureSampleProps) => {
+  const crestPalette = React.useContext(CrestPaletteContext)
+  const theme = useTheme();
+
+  let hex = "#000000"
+  const tinctureVisitor: TinctureVisitor = {
+    visitStandardTincture: (standardTincture: StandardTincture) => {
+      hex = standardTincture.getColorHex(crestPalette)
+    },
+  }
+  props.tincture.accept(tinctureVisitor)
+
+  return (
+    <Paper
+      variant="outlined"
+      elevation={0}
+      style={{
+        width: theme.spacing(3),
+        height: theme.spacing(3),
+        backgroundColor: hex
+      }}
+    />
   )
 }
 

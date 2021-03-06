@@ -4,9 +4,10 @@ import SolidField from './model/field/SolidField'
 import { Billet, Lozenge, Mullet, Roundel } from './model/charge/MobileSubordinary'
 import { Bend, Cross, Fess, Pale, Saltire } from './model/ordinary/Ordinary'
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from './model/texture/VariationTexture'
-import { ChargeVisitor, CrestVisitor, FieldVisitor, OrdinaryVisitor, TextureVisitor, Visitable } from './util/Visitor'
+import { ChargeVisitor, CrestVisitor, FieldVisitor, OrdinaryVisitor, TextureVisitor, TinctureVisitor, Visitable } from './util/Visitor'
 import { InBend, InFess, InPale } from './model/charge/GroupCharge'
-import { ColorTincture, MetalTincture } from './model/texture/Tincture'
+import { StandardTincture } from './model/texture/Tincture'
+import CrestPalette from './CrestPalette'
 
 export abstract class CrestRenderer
   implements CrestVisitor, FieldVisitor, TextureVisitor, ChargeVisitor, OrdinaryVisitor {
@@ -14,7 +15,11 @@ export abstract class CrestRenderer
   protected readonly viewportWidth: number
   protected readonly viewportHeight: number
 
-  constructor(viewportWidth: number, viewportHeight: number) {
+  constructor(
+    viewportWidth: number,
+    viewportHeight: number,
+    protected readonly crestPalette: CrestPalette
+  ) {
     console.log("CrestRenderer", viewportWidth, viewportHeight)
     this.viewportWidth = viewportWidth
     this.viewportHeight = viewportHeight
@@ -40,8 +45,7 @@ export abstract class CrestRenderer
   abstract visitPerChevronDividedField(field: PerChevronDividedField): void
   abstract visitPerPallDividedField(field: PerPallDividedField): void
 
-  abstract visitColorTincture(texture: ColorTincture): void
-  abstract visitMetalTincture(metalTincture: MetalTincture): void
+  abstract visitStandardTincture(standardTincture: StandardTincture): void
   abstract visitBarry(barry: Barry): void
   abstract visitPaly(paly: Paly): void
   abstract visitBendy(bendy: Bendy): void
@@ -65,4 +69,4 @@ export abstract class CrestRenderer
   abstract visitSaltire(saltire: Saltire): void
 }
 
-export type Renderable = CrestVisitor | FieldVisitor | TextureVisitor | ChargeVisitor | OrdinaryVisitor
+export type Renderable = CrestVisitor | FieldVisitor | TinctureVisitor | TextureVisitor | ChargeVisitor | OrdinaryVisitor

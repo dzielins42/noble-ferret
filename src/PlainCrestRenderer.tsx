@@ -19,7 +19,8 @@ import LozengeType from './model/LozengeType'
 import ContextPathDrawer from './ContextPathDrawer'
 import { ChargeVisitor, CrestVisitor, FieldVisitor, TextureVisitor, Visitable } from './util/Visitor'
 import { InBend, InFess, InPale } from './model/charge/GroupCharge'
-import { ColorTincture, MetalTincture, Tincture } from './model/texture/Tincture'
+import { StandardTincture, Tincture } from './model/texture/Tincture'
+import CrestPalette from './CrestPalette'
 
 class PlainCrestRenderer extends CrestRenderer {
 
@@ -29,9 +30,10 @@ class PlainCrestRenderer extends CrestRenderer {
   constructor(
     viewportWidth: number,
     viewportHeight: number,
+    crestPalette: CrestPalette,
     escutcheon: Escutcheon
   ) {
-    super(viewportWidth, viewportHeight)
+    super(viewportWidth, viewportHeight, crestPalette)
 
     const dimen = Math.min(viewportWidth, viewportHeight) * 0.75
     const x = (viewportWidth - dimen) / 2
@@ -1133,26 +1135,16 @@ class PlainCrestRenderer extends CrestRenderer {
     )
   }
 
-  visitColorTincture(colorTincture: ColorTincture): void {
-    this.value = (
-      <Rect
-        x={0}
-        y={0}
-        width={this.viewportWidth}
-        height={this.viewportHeight}
-        fill={colorTincture.colorHex}
-      />
-    )
-  }
+  visitStandardTincture(standardTincture: StandardTincture): void {
+    let hex = standardTincture.getColorHex(this.crestPalette)
 
-  visitMetalTincture(metalTincture: MetalTincture): void {
     this.value = (
       <Rect
         x={0}
         y={0}
         width={this.viewportWidth}
         height={this.viewportHeight}
-        fill={metalTincture.colorHex}
+        fill={hex}
       />
     )
   }
@@ -1171,7 +1163,7 @@ class PlainCrestRenderer extends CrestRenderer {
     height: number = this.viewportHeight,
     escutcheon: Escutcheon = this.escutcheon
   ): React.ReactNode {
-    let renderer = new PlainCrestRenderer(width, height, escutcheon)
+    let renderer = new PlainCrestRenderer(width, height, this.crestPalette, escutcheon)
     return renderer.render(visitable)
   }
 

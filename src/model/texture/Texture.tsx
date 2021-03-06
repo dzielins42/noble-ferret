@@ -1,5 +1,5 @@
-import { TextureVisitor, Visitable } from "../../util/Visitor";
+import { TextureVisitor, TinctureVisitor, Visitable } from "../../util/Visitor";
 
-interface Texture extends Visitable<TextureVisitor> { }
+interface Texture extends Visitable<TextureVisitor | TinctureVisitor> { }
 
 export default Texture

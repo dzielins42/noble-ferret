@@ -274,7 +274,7 @@ function getTextures(
   field.accept(visitor)
 
   while (result.length < minCount) {
-    result.push(randomTincture(crestPalette))
+    result.push(randomTincture())
   }
 
   return result

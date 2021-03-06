@@ -4,7 +4,7 @@ import React from "react"
 import CrestPalette from "../CrestPalette"
 import { CrestPaletteContext } from "../CrestPaletteContext"
 import Texture from "../model/texture/Texture"
-import { ColorTincture, MetalTincture, randomTincture, Tincture } from "../model/texture/Tincture"
+import { StandardTincture, randomTincture, Tincture } from "../model/texture/Tincture"
 import { Barry, Bendy, Chequy, Fusilly, Lozengy, Paly, Ruste } from "../model/texture/VariationTexture"
 import { useNonInitialEffect } from "../util/Hooks"
 import { TextureVisitor } from "../util/Visitor"
@@ -59,7 +59,7 @@ export const TextureToolsPanel = (props: TextureToolsPanelProps) => {
   }
 
   return (
-    <Paper>
+    <>
       <FormControl>
         <InputLabel htmlFor="texture-type-select">Type</InputLabel>
         <Select
@@ -76,7 +76,7 @@ export const TextureToolsPanel = (props: TextureToolsPanelProps) => {
         </Select>
       </FormControl>
       {content}
-    </Paper>
+    </>
   )
 }
 
@@ -88,20 +88,10 @@ function getContent(
 
   const contentVisitor: TextureVisitor = {
     // Tincture
-    visitColorTincture: (colorTincture: ColorTincture) => {
+    visitStandardTincture: (standardTincture: StandardTincture) => {
       content = (
         <TinctureToolsPanel
-          tincture={colorTincture}
-          onChange={(tincture: Tincture) => {
-            func(tincture)
-          }}
-        />
-      )
-    },
-    visitMetalTincture: (metalTincture: MetalTincture) => {
-      content = (
-        <TinctureToolsPanel
-          tincture={metalTincture}
+          tincture={standardTincture}
           onChange={(tincture: Tincture) => {
             func(tincture)
           }}
@@ -375,8 +365,7 @@ function getParameter(
 
   const visitor: TextureVisitor = {
     // Tincture
-    visitColorTincture: () => { },
-    visitMetalTincture: () => { },
+    visitStandardTincture: () => { },
     // Variation
     visitBarry: (barry: Barry) => {
       result = barry.count
@@ -415,11 +404,8 @@ function getTinctures(
 
   const visitor: TextureVisitor = {
     // Tincture
-    visitColorTincture: (colorTincture: ColorTincture) => {
-      tinctures.push(colorTincture)
-    },
-    visitMetalTincture: (metalTincture: MetalTincture) => {
-      tinctures.push(metalTincture)
+    visitStandardTincture: (standardTincture: StandardTincture) => {
+      tinctures.push(standardTincture)
     },
     // Variation
     visitBarry: (barry: Barry) => {
@@ -455,7 +441,7 @@ function getTinctures(
   texture.accept(visitor)
 
   while (tinctures.length < minCount) {
-    tinctures.push(randomTincture(crestPalette))
+    tinctures.push(randomTincture())
   }
 
   return tinctures
