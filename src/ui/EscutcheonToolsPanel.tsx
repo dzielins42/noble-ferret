@@ -35,26 +35,24 @@ export const EscutcheonToolsPanel = (props: EscutcheonToolsPanelProps) => {
   }
 
   return (
-    <Paper>
-      <FormControl>
-        <InputLabel htmlFor="escutcheon-type-select">Type</InputLabel>
-        <Select
-          native
-          value={selectedValue}
-          onChange={handleChange}
-          inputProps={{
-            id: 'escutcheon-type-select',
-          }}
-        >
-          {selectedValue < 0 &&
-            <option aria-label="None" value="-1" />
-          }
-          {options.map(({ label }, index) => {
-            return (<option value={index}>{label}</option>)
-          })}
-        </Select>
-      </FormControl>
-    </Paper>
+    <FormControl>
+      <InputLabel htmlFor="escutcheon-type-select">Type</InputLabel>
+      <Select
+        native
+        value={selectedValue}
+        onChange={handleChange}
+        inputProps={{
+          id: 'escutcheon-type-select',
+        }}
+      >
+        {selectedValue < 0 &&
+          <option aria-label="None" value="-1" />
+        }
+        {options.map(({ label }, index) => {
+          return (<option value={index}>{label}</option>)
+        })}
+      </Select>
+    </FormControl>
   )
 }
 
