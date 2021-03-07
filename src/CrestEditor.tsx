@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Container, createStyles, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Theme, Typography } from "@material-ui/core"
+import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, Container, createStyles, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Paper, Select, Theme, Typography } from "@material-ui/core"
 import React, { useState } from "react"
 import AspectRatio from "./AspectRatio"
 import { InBend } from "./model/charge/GroupCharge"
@@ -20,9 +20,12 @@ import Texture from "./model/texture/Texture"
 import { CrestPaletteContext } from "./CrestPaletteContext"
 import { PastelCrestPalette } from "./CrestPalette"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import SaveIcon from '@material-ui/icons/Save'
+import GetAppIcon from '@material-ui/icons/GetApp'
 import { EscutcheonToolsPanel } from "./ui/EscutcheonToolsPanel"
-import { AzureTincture, GulesTincture, OrTincture, Tincture, VertTincture } from "./model/texture/Tincture"
+import { AzureTincture, GulesTincture, OrTincture, SableTincture, Tincture, VertTincture } from "./model/texture/Tincture"
 import { CrestPreview } from "./CrestPreview"
+import Konva from "konva"
 
 type CrestEditorProps = {}
 
@@ -76,22 +79,23 @@ export const CrestEditor = (props: CrestEditorProps) => {
       ),
       /*[
         new Saltire(
-          new ColorTincture(red),
+          GulesTincture,
           [
             new InBend([
-              new Roundel(new ColorTincture(black)),
-              new Roundel(new ColorTincture(black)),
-              new Roundel(new ColorTincture(black))
+              new Roundel(SableTincture),
+              new Roundel(SableTincture),
+              new Roundel(SableTincture)
             ]),
-            new Roundel(new ColorTincture(yellow)),
-            new Roundel(new ColorTincture(yellow)),
-            new Roundel(new ColorTincture(yellow)),
-            new Roundel(new ColorTincture(yellow)),
+            new Roundel(OrTincture),
+            new Roundel(OrTincture),
+            new Roundel(OrTincture),
+            new Roundel(OrTincture),
           ]
         )
       ]*/
     )
   )
+  const stageRef = React.createRef<Konva.Stage>()
 
   const handleEscutcheonChange = (escutcheon: Escutcheon) => {
     console.log("Escutcheon changed")
@@ -105,6 +109,18 @@ export const CrestEditor = (props: CrestEditorProps) => {
     ))
   }
 
+  const handleExport = () => {
+    if (stageRef.current) {
+      const uri = stageRef.current.toDataURL();
+      var link = document.createElement('a');
+      link.download = "crest.png";
+      link.href = uri;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   return (
     <Container >
       <CrestPaletteContext.Provider value={new PastelCrestPalette()}>
@@ -112,11 +128,23 @@ export const CrestEditor = (props: CrestEditorProps) => {
           <Grid container spacing={1}>
             <Grid item xs={8}>
               <Paper className={classes.paper}>
-                <CrestPreview crest={crest} escutcheon={escutcheon} />
+                <CrestPreview ref={stageRef} crest={crest} escutcheon={escutcheon} />
               </Paper>
             </Grid>
             <Grid item xs={4}>
               <Paper className={classes.paper}>
+                <ButtonGroup color="primary">
+                  <Button
+                    disabled
+                  >
+                    <SaveIcon />
+                  </Button>
+                  <Button
+                    onClick={() => { handleExport() }}
+                  >
+                    <GetAppIcon />
+                  </Button>
+                </ButtonGroup>
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Escutcheon</Typography>
