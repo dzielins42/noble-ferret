@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, InputLabel, Paper, Select } from "@material-ui/core"
+import { Accordion, AccordionDetails, AccordionSummary, FormControl, FormLabel, InputLabel, Paper, Select, Typography } from "@material-ui/core"
 import _ from "lodash"
 import React, { useState } from "react"
 import CrestPalette from "../CrestPalette"
@@ -10,7 +10,9 @@ import Texture from "../model/texture/Texture"
 import { randomTincture } from "../model/texture/Tincture"
 import { useNonInitialEffect } from "../util/Hooks"
 import { FieldVisitor } from "../util/Visitor"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import { TextureToolsPanel } from "./TextureToolsPanel"
+import { useStyles } from "../CrestEditor"
 
 type FieldToolsPanelProps = {
   field: Field
@@ -197,6 +199,8 @@ type MultiTextureToolsPanel = {
 }
 
 const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
+  const classes = useStyles()
+
   const count = props.textures.length
   const panels = []
   for (let i = 0; i < count; i++) {
@@ -208,6 +212,23 @@ const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
       }
     }
     panels.push(
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>{label}</Typography>
+        </AccordionSummary>
+        <AccordionDetails className={classes.toolsPanel}>
+          <TextureToolsPanel
+            texture={props.textures[i]}
+            onChange={(texture: Texture) => {
+              const newTextures = [...props.textures]
+              newTextures[i] = texture
+              props.onChange(newTextures)
+            }}
+          />
+        </AccordionDetails>
+      </Accordion>
+    )
+    /*panels.push(
       <>
         {props.withLabels !== undefined &&
           <FormLabel component="legend">{label}</FormLabel>
@@ -221,7 +242,7 @@ const MultiTextureToolsPanel = (props: MultiTextureToolsPanel) => {
           }}
         />
       </>
-    )
+    )*/
   }
 
   return (

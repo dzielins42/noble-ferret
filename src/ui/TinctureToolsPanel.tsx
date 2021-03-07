@@ -1,4 +1,4 @@
-import { Paper, useTheme } from "@material-ui/core"
+import { Divider, Paper, useTheme } from "@material-ui/core"
 import { ToggleButton } from "@material-ui/lab"
 import React, { useState } from "react"
 import { useStyles } from "../CrestEditor"
@@ -107,14 +107,17 @@ export const MultiTinctureToolsPanel = (props: MultiTinctureToolsPanelProps) => 
   const tincturePanels = []
   for (let i = 0; i < count; i++) {
     tincturePanels.push(
-      <TinctureToolsPanel
-        tincture={props.tinctures[i]}
-        onChange={(tincture: Tincture) => {
-          const newTinctures = [...props.tinctures]
-          newTinctures[i] = tincture
-          props.onChange ?.(newTinctures)
+      <>
+        <TinctureToolsPanel
+          tincture={props.tinctures[i]}
+          onChange={(tincture: Tincture) => {
+            const newTinctures = [...props.tinctures]
+            newTinctures[i] = tincture
+            props.onChange ?.(newTinctures)
         }}
-      />
+        />
+        {i < count - 1 && <Divider />}
+      </>
     )
   }
 

@@ -40,8 +40,8 @@ export const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "column",
       // Direct children
       '& > *': {
-        paddingTop: theme.spacing(2),
-        paddingBottom: theme.spacing(2),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
       }
     },
     tinctureItem: {
