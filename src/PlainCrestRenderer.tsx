@@ -35,18 +35,20 @@ class PlainCrestRenderer extends CrestRenderer {
   ) {
     super(viewportWidth, viewportHeight, crestPalette)
 
-    const dimen = Math.min(viewportWidth, viewportHeight) * 0.75
-    const x = (viewportWidth - dimen) / 2
-    const y = (viewportHeight - dimen) / 2
     this.escutcheon = escutcheon
     this.bounds = this.escutcheon.bounds
   }
 
   visitCrest(crest: Crest): void {
-    const escutcheonBounds = this.escutcheon.bounds
+    const bounds = this.bounds
+    const offsetX = 0.5 * (this.viewportWidth - bounds.width)
+    const offsetY = 0.5 * (this.viewportHeight - bounds.height)
 
     this.value = (
-      <Layer>
+      <Layer
+        offsetX={-offsetX}
+        offsetY={-offsetY}
+      >
         <Group
           clipFunc={(ctx: Konva.Context) => {
             const drawer = new ContextPathDrawer(ctx)
@@ -68,10 +70,10 @@ class PlainCrestRenderer extends CrestRenderer {
           strokeWidth={4}
         />
         <Rect
-          x={escutcheonBounds.left}
-          y={escutcheonBounds.top}
-          width={escutcheonBounds.width}
-          height={escutcheonBounds.height}
+          x={bounds.left}
+          y={bounds.top}
+          width={bounds.width}
+          height={bounds.height}
           stroke="black"
           strokeWidth={4}
         />

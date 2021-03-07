@@ -62,7 +62,7 @@ export const CrestEditor = (props: CrestEditorProps) => {
   const classes = useStyles()
 
   const [escutcheon, setEscutcheon] = useState<Escutcheon>(
-    new HeaterEscutcheon(50, 50, 100)
+    new HeaterEscutcheon(100)
   )
   const [crest, setCrest] = useState<Crest>(
     new Crest(

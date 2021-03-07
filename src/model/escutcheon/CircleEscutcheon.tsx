@@ -5,8 +5,6 @@ import Escutcheon from "./Escutcheon"
 class CircleEscutcheon extends Escutcheon {
 
   constructor(
-    private readonly x: number,
-    private readonly y: number,
     private readonly r: number
   ) {
     super()
@@ -14,22 +12,22 @@ class CircleEscutcheon extends Escutcheon {
 
   get chief(): Point {
     return new Point(
-      this.x + this.r, this.y
+      this.r, 0
     )
   }
   get dexter(): Point {
     return new Point(
-      this.x, this.y + this.r
+      0, this.r
     )
   }
   get sinister(): Point {
     return new Point(
-      this.x + 2 * this.r, this.y + this.r
+      2 * this.r, this.r
     )
   }
   get base(): Point {
     return new Point(
-      this.x + this.r, this.y + 2 * this.r
+      this.r, 2 * this.r
     )
   }
 
