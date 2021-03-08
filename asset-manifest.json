@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/noble-ferret/static/css/main.ea1455b2.chunk.css",
+    "main.js": "/noble-ferret/static/js/main.e42ea284.chunk.js",
+    "main.js.map": "/noble-ferret/static/js/main.e42ea284.chunk.js.map",
+    "runtime-main.js": "/noble-ferret/static/js/runtime-main.134373e5.js",
+    "runtime-main.js.map": "/noble-ferret/static/js/runtime-main.134373e5.js.map",
+    "static/js/2.d01437ec.chunk.js": "/noble-ferret/static/js/2.d01437ec.chunk.js",
+    "static/js/2.d01437ec.chunk.js.map": "/noble-ferret/static/js/2.d01437ec.chunk.js.map",
+    "static/js/3.70086b13.chunk.js": "/noble-ferret/static/js/3.70086b13.chunk.js",
+    "static/js/3.70086b13.chunk.js.map": "/noble-ferret/static/js/3.70086b13.chunk.js.map",
+    "index.html": "/noble-ferret/index.html",
+    "static/css/main.ea1455b2.chunk.css.map": "/noble-ferret/static/css/main.ea1455b2.chunk.css.map",
+    "static/js/2.d01437ec.chunk.js.LICENSE.txt": "/noble-ferret/static/js/2.d01437ec.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.134373e5.js",
+    "static/js/2.d01437ec.chunk.js",
+    "static/css/main.ea1455b2.chunk.css",
+    "static/js/main.e42ea284.chunk.js"
+  ]
+}
