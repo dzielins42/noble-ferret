@@ -66,7 +66,7 @@ export const CrestEditor = (props: CrestEditorProps) => {
   const classes = useStyles()
 
   const [escutcheon, setEscutcheon] = useState<Escutcheon>(
-    new HeaterEscutcheon(100)
+    new HeaterEscutcheon(200)
   )
   const [crest, setCrest] = useState<Crest>(
     new Crest(
@@ -100,7 +100,6 @@ export const CrestEditor = (props: CrestEditorProps) => {
   }
   const handleOrdinariesChange = (ordinaries: Ordinary[]) => {
     console.log("Ordinaries changed")
-    console.log(ordinaries)
     setCrest(new Crest(
       crest.field,
       ordinaries
@@ -109,13 +108,13 @@ export const CrestEditor = (props: CrestEditorProps) => {
 
   const handleExport = () => {
     if (stageRef.current) {
-      const uri = stageRef.current.toDataURL();
-      var link = document.createElement('a');
-      link.download = "crest.png";
-      link.href = uri;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const uri = stageRef.current.toDataURL()
+      var link = document.createElement('a')
+      link.download = "crest.png"
+      link.href = uri
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 

@@ -66,32 +66,32 @@ function getOptions(): EscutcheonOption[] {
     {
       label: "Heater",
       factoryFunc: () => {
-        return new HeaterEscutcheon(100)
+        return new HeaterEscutcheon(200)
       }
     },
     {
       label: "Square",
       factoryFunc: () => {
-        return new RectangleEscutcheon(400, 400)
+        return new RectangleEscutcheon(600, 600)
       }
 
     },
     {
       label: "Flag (2:3)",
       factoryFunc: () => {
-        return new RectangleEscutcheon(300, 200)
+        return new RectangleEscutcheon(600, 400)
       }
     },
     {
       label: "Flag (1:2)",
       factoryFunc: () => {
-        return new RectangleEscutcheon(400, 200)
+        return new RectangleEscutcheon(600, 300)
       }
     },
     {
       label: "Circle",
       factoryFunc: () => {
-        return new CircleEscutcheon(200)
+        return new CircleEscutcheon(300)
       }
     },
   ]
