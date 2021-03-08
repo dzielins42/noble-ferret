@@ -53,7 +53,8 @@ class PlainCrestRenderer extends CrestRenderer {
           clipFunc={(ctx: Konva.Context) => {
             const drawer = new ContextPathDrawer(ctx)
             drawer.draw(this.escutcheon)
-          }}>
+          }}
+        >
           {this.renderSelf(crest.field)}
           {crest.ordinaries.map((ordinary, index) => {
             return this.renderSelf(ordinary)
@@ -684,13 +685,14 @@ class PlainCrestRenderer extends CrestRenderer {
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
+            ctx.save()
             ctx.translate(
               fessPoint.x,
               fessPoint.y
             )
             ctx.rotate(q)
             ctx.rect(-dimen / 2, -t / 2, dimen, t)
-            ctx.reset()
+            ctx.restore()
           }}
         >
           {this.renderSelf(bend.texture)}
@@ -742,20 +744,22 @@ class PlainCrestRenderer extends CrestRenderer {
       <Group>
         <Group
           clipFunc={(ctx: Konva.Context) => {
+            ctx.save()
             ctx.translate(
               fessPoint.x,
               fessPoint.y
             )
             ctx.rotate(q1)
             ctx.rect(-dimen / 2, -t / 2, dimen, t)
-            ctx.reset()
+            ctx.restore()
+            ctx.save()
             ctx.translate(
               fessPoint.x,
               fessPoint.y
             )
             ctx.rotate(q2)
             ctx.rect(-dimen / 2, -t / 2, dimen, t)
-            ctx.reset()
+            ctx.restore()
           }}
         >
           {this.renderSelf(saltire.texture)}
