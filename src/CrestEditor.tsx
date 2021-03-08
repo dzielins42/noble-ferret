@@ -7,7 +7,7 @@ import Crest from "./model/Crest"
 import Escutcheon from "./model/escutcheon/Escutcheon"
 import HeaterEscutcheon from "./model/escutcheon/HeaterEscutcheon"
 import SolidField from "./model/field/SolidField"
-import { Saltire } from "./model/ordinary/Ordinary"
+import { Ordinary, Saltire } from "./model/ordinary/Ordinary"
 import { Barry, Bendy, Chequy } from "./model/texture/VariationTexture"
 import logo from './logo.svg'
 import RectangleEscutcheon from "./model/escutcheon/RectangleEscutcheon"
@@ -26,6 +26,7 @@ import { EscutcheonToolsPanel } from "./ui/EscutcheonToolsPanel"
 import { AzureTincture, GulesTincture, OrTincture, SableTincture, Tincture, VertTincture } from "./model/texture/Tincture"
 import { CrestPreview } from "./CrestPreview"
 import Konva from "konva"
+import { OrdinariesToolsPanel } from "./ui/OrdinariesToolsPanel"
 
 type CrestEditorProps = {}
 
@@ -77,22 +78,11 @@ export const CrestEditor = (props: CrestEditorProps) => {
         ),
         OrTincture,
       ),
-      /*[
+      [
         new Saltire(
           GulesTincture,
-          [
-            new InBend([
-              new Roundel(SableTincture),
-              new Roundel(SableTincture),
-              new Roundel(SableTincture)
-            ]),
-            new Roundel(OrTincture),
-            new Roundel(OrTincture),
-            new Roundel(OrTincture),
-            new Roundel(OrTincture),
-          ]
         )
-      ]*/
+      ]
     )
   )
   const stageRef = React.createRef<Konva.Stage>()
@@ -106,6 +96,14 @@ export const CrestEditor = (props: CrestEditorProps) => {
     setCrest(new Crest(
       field,
       crest.ordinaries
+    ))
+  }
+  const handleOrdinariesChange = (ordinaries: Ordinary[]) => {
+    console.log("Ordinaries changed")
+    console.log(ordinaries)
+    setCrest(new Crest(
+      crest.field,
+      ordinaries
     ))
   }
 
@@ -159,6 +157,14 @@ export const CrestEditor = (props: CrestEditorProps) => {
                   </AccordionSummary>
                   <AccordionDetails className={classes.toolsPanel}>
                     <FieldToolsPanel field={crest.field} onChange={handleFieldChange} />
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>Ordinaries</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails className={classes.toolsPanel}>
+                    <OrdinariesToolsPanel ordinaries={crest.ordinaries} onChange={handleOrdinariesChange} />
                   </AccordionDetails>
                 </Accordion>
               </Paper>

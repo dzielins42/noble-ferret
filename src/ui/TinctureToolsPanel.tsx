@@ -79,7 +79,7 @@ type TinctureSampleProps = {
 
 export const TinctureSample = (props: TinctureSampleProps) => {
   const crestPalette = React.useContext(CrestPaletteContext)
-  const theme = useTheme();
+  const theme = useTheme()
 
   let hex = "#000000"
   const tinctureVisitor: TinctureVisitor = {
